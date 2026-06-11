@@ -9,6 +9,7 @@ SECRET_KEY = 'django-insecure-u9t!v#0wj22qkq-8w1twp7dt+rt51rm0vp8-tmitcf(+ur%3((
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
+CSRF_TRUSTED_ORIGINS = ['https://pil1252619final-production.up.railway.app']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
