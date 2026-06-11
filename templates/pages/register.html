@@ -367,15 +367,17 @@
             }
             
             // Stocker les données dans localStorage
+            const phone = document.getElementById('phone')?.value.trim();
             localStorage.setItem('signup_data', JSON.stringify({
-                firstName, 
-                lastName, 
-                matricule, 
-                email, 
-                major, 
-                level, 
-                password
-            }));
+            firstName,
+            lastName,
+            matricule,
+            email,
+            major,
+            level,
+            password,
+            phone
+        }));
             
             // Changer d'étape
             document.getElementById('step1').classList.remove('active-step');
