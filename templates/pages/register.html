@@ -119,6 +119,7 @@
             <!-- ÉTAPE 1 -->
             <div id="step1" class="step-content active-step">
                 <form id="step1Form" class="space-y-5">
+                    {% csrf_token %}
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div>
                             <label class="block text-sm font-medium text-[#36675a] mb-1">Prénom <span class="text-red-500">*</span></label>
