@@ -11,6 +11,7 @@ from .models import Users, Profil
 from apps.matching.models import Matching, Feedback, Competence
 from apps.messaging.models import Messages
 from apps.core.models import Matiere
+from django.views.decorators.csrf import csrf_exempt
 
 def login_view(request):
     if request.user.is_authenticated:
@@ -53,7 +54,7 @@ def register_view(request):
     
     return render(request, 'pages/register.html')
 
-
+@csrf_exempt
 def register_api_view(request):
     """API pour l'inscription en deux étapes avec points forts/faibles"""
     if request.method != 'POST':
