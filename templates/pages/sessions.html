@@ -1,0 +1,547 @@
+{% extends 'base.html' %}
+
+{% block title %}Mes Sessions - MentorLink{% endblock %}
+
+{% block extra_head %}
+<style>
+    .session-card {
+        transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+    }
+    
+    .session-card:hover {
+        transform: translateY(-2px);
+    }
+    
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+    
+    .status-upcoming {
+        background: #e3f9eb;
+        color: #386943;
+    }
+    
+    .status-progress {
+        background: #baf0c0;
+        color: #1f502d;
+    }
+    
+    .status-completed {
+        background: #f1f5f9;
+        color: #64748b;
+    }
+    
+    .status-cancelled {
+        background: #ffdad6;
+        color: #ba1a1a;
+    }
+    
+    .status-proposed {
+        background: #b6ebd9;
+        color: #36675a;
+    }
+    
+    @keyframes modalSlide {
+        from {
+            opacity: 0;
+            transform: scale(0.95) translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+    }
+    
+    .modal-animate {
+        animation: modalSlide 0.3s ease-out;
+    }
+    
+    .star-rating {
+        display: flex;
+        gap: 4px;
+    }
+    
+    .star {
+        cursor: pointer;
+        transition: transform 0.1s ease;
+    }
+    
+    .star:hover {
+        transform: scale(1.1);
+    }
+    
+    .feedback-card {
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mb-6">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-2xl md:text-3xl font-semibold text-on-surface tracking-tight">Mes sessions</h1>
+            <p class="text-sm text-on-surface-variant mt-1">Gérez vos sessions de mentorat</p>
+        </div>
+        <div class="flex gap-2">
+            <div class="relative">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-lg">search</span>
+                <input type="text" id="searchSessions" placeholder="Rechercher..." 
+                       class="pl-10 pr-4 py-2 bg-white border border-outline-variant/30 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 w-full md:w-64">
+            </div>
+            <button id="filterBtn" class="p-2 rounded-xl border border-outline-variant/30 hover:bg-surface-container transition">
+                <span class="material-symbols-outlined text-outline">filter_list</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Cartes statistiques -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div class="bg-white rounded-2xl p-4 border border-outline-variant/20">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-xs text-outline uppercase tracking-wide">Sessions à venir</p>
+                <p class="text-2xl font-bold text-on-surface mt-1">{{ upcoming_sessions|length }}</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-primary">calendar_today</span>
+            </div>
+        </div>
+    </div>
+    <div class="bg-white rounded-2xl p-4 border border-outline-variant/20">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-xs text-outline uppercase tracking-wide">Sessions complétées</p>
+                <p class="text-2xl font-bold text-on-surface mt-1">{{ completed_sessions|length }}</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-tertiary/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-tertiary">check_circle</span>
+            </div>
+        </div>
+    </div>
+    <div class="bg-white rounded-2xl p-4 border border-outline-variant/20">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-xs text-outline uppercase tracking-wide">Heures totales</p>
+                <p class="text-2xl font-bold text-on-surface mt-1">{{ total_hours }}</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-secondary/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-secondary">schedule</span>
+            </div>
+        </div>
+    </div>
+    <div class="bg-gradient-to-r from-primary to-primary/80 rounded-2xl p-4 text-white">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-xs text-white/70 uppercase tracking-wide">Note moyenne</p>
+                <p class="text-2xl font-bold mt-1">{{ avg_rating }}</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+                <span class="material-symbols-outlined">star</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filtres -->
+<div id="filterPanel" class="hidden bg-white rounded-2xl p-4 border border-outline-variant/20 mb-6">
+    <div class="flex flex-wrap gap-4 items-end">
+        <div class="flex-1 min-w-[150px]">
+            <label class="block text-xs font-medium text-on-surface-variant mb-1">Statut</label>
+            <select id="statusFilter" class="w-full bg-white border border-outline-variant/30 rounded-xl px-3 py-2 text-sm">
+                <option value="all">Tous les statuts</option>
+                <option value="upcoming">À venir</option>
+                <option value="completed">Terminées</option>
+                <option value="cancelled">Annulées</option>
+            </select>
+        </div>
+        <div class="flex-1 min-w-[150px]">
+            <label class="block text-xs font-medium text-on-surface-variant mb-1">Rôle</label>
+            <select id="roleFilter" class="w-full bg-white border border-outline-variant/30 rounded-xl px-3 py-2 text-sm">
+                <option value="all">Tous</option>
+                <option value="mentor">En tant que mentor</option>
+                <option value="mentee">En tant qu'étudiant</option>
+            </select>
+        </div>
+        <div>
+            <button id="resetFilters" class="text-sm text-outline hover:text-primary transition-colors px-3 py-2">Réinitialiser</button>
+        </div>
+    </div>
+</div>
+
+<!-- Liste des sessions -->
+<div id="sessionsList" class="space-y-3">
+    
+    <!-- Sessions proposées -->
+    {% if proposed_sessions %}
+    <div class="mb-4">
+        <h2 class="text-lg font-semibold text-on-surface mb-3">Propositions reçues</h2>
+        {% for session in proposed_sessions %}
+        <div class="session-card bg-white rounded-2xl p-4 border border-outline-variant/20 mb-3">
+            <div class="flex flex-col md:flex-row md:items-center gap-4">
+                <div class="flex items-center gap-3 flex-1">
+                    <div class="w-12 h-12 rounded-full bg-secondary/20 flex items-center justify-center ring-2 ring-secondary/20">
+                        <span class="text-sm font-semibold text-secondary">{{ session.mentor.prenom|slice:":1" }}{{ session.mentor.nom|slice:":1" }}</span>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex flex-wrap items-center gap-2 mb-1">
+                            <h3 class="font-semibold text-on-surface">{{ session.annonce.titre|default:"Proposition de mentorat" }}</h3>
+                            <span class="status-badge status-proposed">
+                                <span class="material-symbols-outlined text-sm">pending</span>
+                                En attente
+                            </span>
+                        </div>
+                        <p class="text-sm text-on-surface-variant">De {{ session.mentor.prenom }} {{ session.mentor.nom }}</p>
+                        <div class="flex flex-wrap items-center gap-3 mt-1 text-xs text-outline">
+                            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">trending_up</span>Score: {{ session.score }}%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    <button class="view-session-btn px-3 py-2 rounded-xl text-sm font-medium bg-primary text-white hover:bg-primary/90 transition-all" data-id="{{ session.id }}">Voir détails</button>
+                    <button class="accept-session-btn px-3 py-2 rounded-xl text-sm font-medium bg-secondary text-white hover:bg-secondary/90 transition-all" data-id="{{ session.id }}">Accepter</button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <!-- Sessions à venir -->
+    {% if upcoming_sessions %}
+    <div class="mb-4">
+        <h2 class="text-lg font-semibold text-on-surface mb-3">Sessions à venir</h2>
+        {% for session in upcoming_sessions %}
+        <div class="session-card bg-white rounded-2xl p-4 border border-outline-variant/20 mb-3">
+            <div class="flex flex-col md:flex-row md:items-center gap-4">
+                <div class="flex items-center gap-3 flex-1">
+                    {% if session.mentor == user %}
+                        <div class="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center ring-2 ring-primary/20">
+                            <span class="text-sm font-semibold text-primary">{{ session.mentore.prenom|slice:":1" }}{{ session.mentore.nom|slice:":1" }}</span>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex flex-wrap items-center gap-2 mb-1">
+                                <h3 class="font-semibold text-on-surface">{{ session.annonce.titre|default:"Session de mentorat" }}</h3>
+                                <span class="status-badge status-upcoming">
+                                    <span class="material-symbols-outlined text-sm">schedule</span>
+                                    À venir
+                                </span>
+                            </div>
+                            <p class="text-sm text-on-surface-variant">Avec {{ session.mentore.prenom }} {{ session.mentore.nom }}</p>
+                            <div class="flex flex-wrap items-center gap-3 mt-1 text-xs text-outline">
+                                <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">calendar_today</span>{{ session.session_date|date:"d/m/Y" }}</span>
+                                <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">schedule</span>{{ session.session_date|date:"H:i" }} • {{ session.duree_minutes }} min</span>
+                                <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">{% if session.lien_reunion %}videocam{% else %}location_on{% endif %}</span>{% if session.lien_reunion %}En ligne{% else %}Campus{% endif %}</span>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center ring-2 ring-primary/20">
+                            <span class="text-sm font-semibold text-primary">{{ session.mentor.prenom|slice:":1" }}{{ session.mentor.nom|slice:":1" }}</span>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex flex-wrap items-center gap-2 mb-1">
+                                <h3 class="font-semibold text-on-surface">{{ session.annonce.titre|default:"Session de mentorat" }}</h3>
+                                <span class="status-badge status-upcoming">
+                                    <span class="material-symbols-outlined text-sm">schedule</span>
+                                    À venir
+                                </span>
+                            </div>
+                            <p class="text-sm text-on-surface-variant">Avec {{ session.mentor.prenom }} {{ session.mentor.nom }}</p>
+                            <div class="flex flex-wrap items-center gap-3 mt-1 text-xs text-outline">
+                                <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">calendar_today</span>{{ session.session_date|date:"d/m/Y" }}</span>
+                                <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">schedule</span>{{ session.session_date|date:"H:i" }} • {{ session.duree_minutes }} min</span>
+                                <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">{% if session.lien_reunion %}videocam{% else %}location_on{% endif %}</span>{% if session.lien_reunion %}En ligne{% else %}Campus{% endif %}</span>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="flex gap-2">
+                    <button class="view-session-btn px-3 py-2 rounded-xl text-sm font-medium bg-primary text-white hover:bg-primary/90 transition-all" data-id="{{ session.id }}">Voir détails</button>
+                    {% if session.lien_reunion %}
+                    <button class="join-session-btn px-3 py-2 rounded-xl text-sm font-medium border border-primary/30 text-primary hover:bg-primary hover:text-white transition-all" data-link="{{ session.lien_reunion }}">Rejoindre</button>
+                    {% endif %}
+                    <button class="cancel-session-btn px-3 py-2 rounded-xl text-sm font-medium border border-error/30 text-error hover:bg-error/10 transition-all" data-id="{{ session.id }}">Annuler</button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <!-- Sessions terminées -->
+    {% if completed_sessions %}
+    <div class="mb-4">
+        <h2 class="text-lg font-semibold text-on-surface mb-3">Sessions terminées</h2>
+        {% for session in completed_sessions %}
+        <div class="session-card bg-white rounded-2xl p-4 border border-outline-variant/20 mb-3">
+            <div class="flex flex-col md:flex-row md:items-center gap-4">
+                <div class="flex items-center gap-3 flex-1">
+                    {% if session.mentor == user %}
+                        <div class="w-12 h-12 rounded-full bg-tertiary/20 flex items-center justify-center ring-2 ring-tertiary/20">
+                            <span class="text-sm font-semibold text-tertiary">{{ session.mentore.prenom|slice:":1" }}{{ session.mentore.nom|slice:":1" }}</span>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex flex-wrap items-center gap-2 mb-1">
+                                <h3 class="font-semibold text-on-surface">{{ session.annonce.titre|default:"Session terminée" }}</h3>
+                                <span class="status-badge status-completed">
+                                    <span class="material-symbols-outlined text-sm">check_circle</span>
+                                    Terminée
+                                </span>
+                            </div>
+                            <p class="text-sm text-on-surface-variant">Avec {{ session.mentore.prenom }} {{ session.mentore.nom }}</p>
+                            <div class="flex flex-wrap items-center gap-3 mt-1 text-xs text-outline">
+                                <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">calendar_today</span>{{ session.session_date|date:"d/m/Y" }}</span>
+                                <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">schedule</span>{{ session.session_date|date:"H:i" }}</span>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="w-12 h-12 rounded-full bg-tertiary/20 flex items-center justify-center ring-2 ring-tertiary/20">
+                            <span class="text-sm font-semibold text-tertiary">{{ session.mentor.prenom|slice:":1" }}{{ session.mentor.nom|slice:":1" }}</span>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex flex-wrap items-center gap-2 mb-1">
+                                <h3 class="font-semibold text-on-surface">{{ session.annonce.titre|default:"Session terminée" }}</h3>
+                                <span class="status-badge status-completed">
+                                    <span class="material-symbols-outlined text-sm">check_circle</span>
+                                    Terminée
+                                </span>
+                            </div>
+                            <p class="text-sm text-on-surface-variant">Avec {{ session.mentor.prenom }} {{ session.mentor.nom }}</p>
+                            <div class="flex flex-wrap items-center gap-3 mt-1 text-xs text-outline">
+                                <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">calendar_today</span>{{ session.session_date|date:"d/m/Y" }}</span>
+                                <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">schedule</span>{{ session.session_date|date:"H:i" }}</span>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="flex gap-2">
+                    <button class="view-session-btn px-3 py-2 rounded-xl text-sm font-medium bg-primary text-white hover:bg-primary/90 transition-all" data-id="{{ session.id }}">Détails</button>
+                    {% if not session.has_feedback %}
+                    <button class="review-session-btn px-3 py-2 rounded-xl text-sm font-medium bg-secondary text-white hover:bg-secondary/90 transition-all" data-id="{{ session.id }}">Évaluer</button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <!-- Sessions annulées -->
+    {% if cancelled_sessions %}
+    <div class="mb-4">
+        <h2 class="text-lg font-semibold text-on-surface mb-3">Sessions annulées</h2>
+        {% for session in cancelled_sessions %}
+        <div class="session-card bg-white rounded-2xl p-4 border border-outline-variant/20 opacity-60 mb-3">
+            <div class="flex flex-col md:flex-row md:items-center gap-4">
+                <div class="flex items-center gap-3 flex-1">
+                    <div class="w-12 h-12 rounded-full bg-error/20 flex items-center justify-center ring-2 ring-error/20">
+                        <span class="text-sm font-semibold text-error">X</span>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex flex-wrap items-center gap-2 mb-1">
+                            <h3 class="font-semibold text-on-surface line-through">{{ session.annonce.titre|default:"Session annulée" }}</h3>
+                            <span class="status-badge status-cancelled">
+                                <span class="material-symbols-outlined text-sm">cancel</span>
+                                Annulée
+                            </span>
+                        </div>
+                        <p class="text-sm text-on-surface-variant">Annulée le {{ session.updated_at|date:"d/m/Y" }}</p>
+                    </div>
+                </div>
+                <div>
+                    <button class="view-session-btn px-3 py-2 rounded-xl text-sm font-medium border border-outline-variant hover:bg-surface-container transition-all" data-id="{{ session.id }}">Détails</button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    {% if not upcoming_sessions and not completed_sessions and not proposed_sessions and not cancelled_sessions %}
+    <div class="text-center py-12 bg-white rounded-xl border border-outline-variant/20">
+        <div class="w-20 h-20 bg-surface-container rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="material-symbols-outlined text-3xl text-outline">event_busy</span>
+        </div>
+        <h3 class="text-lg font-semibold text-on-surface">Aucune session</h3>
+        <p class="text-sm text-on-surface-variant mt-1">Vous n'avez pas encore de sessions</p>
+        <a href="{% url 'matching' %}" class="mt-4 inline-block px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium">Trouver un mentor</a>
+    </div>
+    {% endif %}
+</div>
+
+<!-- MODAL : Détails de la session -->
+<div id="sessionModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 backdrop-blur-sm overflow-y-auto py-8">
+    <div class="bg-white rounded-2xl w-full max-w-2xl mx-4 overflow-hidden shadow-2xl modal-animate">
+        <div class="p-5 border-b border-outline-variant/20 flex justify-between items-center">
+            <h2 id="modalSessionTitle" class="text-xl font-semibold text-on-surface">Détails de la session</h2>
+            <button id="closeModalBtn" class="p-1 rounded-lg hover:bg-surface-container transition"><span class="material-symbols-outlined text-outline">close</span></button>
+        </div>
+        <div id="modalContent" class="p-5"></div>
+    </div>
+</div>
+
+<!-- MODAL : Évaluation -->
+<div id="reviewModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl w-full max-w-md mx-4 overflow-hidden shadow-2xl modal-animate">
+        <div class="p-5 border-b border-outline-variant/20"><h2 class="text-xl font-semibold text-on-surface">Évaluer la session</h2></div>
+        <div class="p-5">
+            <div class="text-center mb-4">
+                <img id="reviewAvatar" src="" class="w-16 h-16 rounded-full object-cover mx-auto mb-2">
+                <h3 id="reviewName" class="font-semibold text-on-surface"></h3>
+                <p id="reviewSubject" class="text-xs text-outline mt-1"></p>
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-on-surface mb-2">Note</label>
+                <div class="star-rating flex justify-center gap-2" id="starRating"></div>
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-on-surface mb-2">Commentaire</label>
+                <textarea id="reviewComment" rows="3" placeholder="Partagez votre expérience..." class="w-full bg-white border border-outline-variant/30 rounded-xl px-3 py-2 text-sm resize-none"></textarea>
+            </div>
+            <div class="flex gap-3">
+                <button id="cancelReviewBtn" class="flex-1 px-4 py-2 border border-outline-variant rounded-xl text-sm font-medium hover:bg-surface-container transition-all">Annuler</button>
+                <button id="submitReviewBtn" class="flex-1 bg-primary text-white py-2 rounded-xl text-sm font-medium hover:bg-primary/90 transition-all">Envoyer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const csrfToken = '{{ csrf_token }}';
+    let currentSessionId = null;
+    let selectedRating = 0;
+    let currentReviewSessionId = null;
+    
+    // Voir détails
+    function openSessionModal(sessionId) {
+        fetch(`/sessions/${sessionId}/`)
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('modalContent').innerHTML = html;
+                document.getElementById('sessionModal').classList.remove('hidden');
+                document.getElementById('sessionModal').classList.add('flex');
+            })
+            .catch(error => console.error('Erreur:', error));
+    }
+    
+    document.querySelectorAll('.view-session-btn').forEach(btn => {
+        btn.addEventListener('click', () => openSessionModal(btn.dataset.id));
+    });
+    
+    // Accepter session
+    document.querySelectorAll('.accept-session-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (confirm('Accepter cette proposition de mentorat ?')) {
+                fetch(`/sessions/${btn.dataset.id}/accept/`, {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': csrfToken }
+                }).then(() => window.location.reload());
+            }
+        });
+    });
+    
+    // Annuler session
+    document.querySelectorAll('.cancel-session-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (confirm('Annuler cette session ?')) {
+                fetch(`/sessions/${btn.dataset.id}/cancel/`, {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': csrfToken }
+                }).then(() => window.location.reload());
+            }
+        });
+    });
+    
+    // Rejoindre session
+    document.querySelectorAll('.join-session-btn').forEach(btn => {
+        btn.addEventListener('click', () => window.open(btn.dataset.link, '_blank'));
+    });
+    
+    // Évaluation
+    document.querySelectorAll('.review-session-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            currentReviewSessionId = btn.dataset.id;
+            document.getElementById('reviewModal').classList.remove('hidden');
+            document.getElementById('reviewModal').classList.add('flex');
+            
+            const starContainer = document.getElementById('starRating');
+            starContainer.innerHTML = '';
+            selectedRating = 0;
+            for (let i = 1; i <= 5; i++) {
+                const star = document.createElement('span');
+                star.className = 'material-symbols-outlined star text-3xl text-outline hover:text-amber-500 transition-all cursor-pointer';
+                star.innerText = 'star_outline';
+                star.dataset.rating = i;
+                star.addEventListener('click', function() {
+                    selectedRating = parseInt(this.dataset.rating);
+                    document.querySelectorAll('#starRating .star').forEach((s, idx) => {
+                        s.innerText = idx < selectedRating ? 'star' : 'star_outline';
+                        s.classList.toggle('text-amber-500', idx < selectedRating);
+                    });
+                });
+                starContainer.appendChild(star);
+            }
+        });
+    });
+    
+    document.getElementById('closeModalBtn')?.addEventListener('click', () => {
+        document.getElementById('sessionModal').classList.add('hidden');
+    });
+    
+    document.getElementById('cancelReviewBtn')?.addEventListener('click', () => {
+        document.getElementById('reviewModal').classList.add('hidden');
+    });
+    
+    document.getElementById('submitReviewBtn')?.addEventListener('click', () => {
+        if (selectedRating === 0) { alert("Sélectionnez une note"); return; }
+        const comment = document.getElementById('reviewComment').value;
+        fetch(`/sessions/${currentReviewSessionId}/feedback/`, {
+            method: 'POST',
+            headers: { 'X-CSRFToken': csrfToken, 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `note=${selectedRating}&commentaire=${encodeURIComponent(comment)}`
+        }).then(() => window.location.reload());
+    });
+    
+    // Filtres et recherche
+    document.getElementById('filterBtn')?.addEventListener('click', () => {
+        document.getElementById('filterPanel').classList.toggle('hidden');
+    });
+    
+    document.getElementById('resetFilters')?.addEventListener('click', () => {
+        document.getElementById('statusFilter').value = 'all';
+        document.getElementById('roleFilter').value = 'all';
+        document.getElementById('searchSessions').value = '';
+        filterSessions();
+    });
+    
+    function filterSessions() {
+        const status = document.getElementById('statusFilter').value;
+        const role = document.getElementById('roleFilter').value;
+        const search = document.getElementById('searchSessions').value.toLowerCase();
+        
+        document.querySelectorAll('.session-card').forEach(card => {
+            const cardStatus = card.dataset.status;
+            const cardRole = card.dataset.role;
+            const cardText = card.innerText.toLowerCase();
+            
+            let show = true;
+            if (status !== 'all' && cardStatus !== status) show = false;
+            if (role !== 'all' && cardRole !== role) show = false;
+            if (search && !cardText.includes(search)) show = false;
+            
+            card.style.display = show ? 'block' : 'none';
+        });
+    }
+    
+    document.getElementById('statusFilter')?.addEventListener('change', filterSessions);
+    document.getElementById('roleFilter')?.addEventListener('change', filterSessions);
+    document.getElementById('searchSessions')?.addEventListener('input', filterSessions);
+</script>
+{% endblock %}

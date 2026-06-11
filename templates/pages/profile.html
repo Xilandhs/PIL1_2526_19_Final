@@ -1,0 +1,253 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if is_owner %}Mon Profil{% else %}Profil de {{ user.prenom }} {{ user.nom }}{% endif %} - MentorLink{% endblock %}
+
+{% block extra_head %}
+<style>
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-up { animation: fadeInUp 0.4s ease-out forwards; }
+    .stat-card { transition: all 0.2s; }
+    .stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
+    .skill-badge { transition: all 0.2s; }
+    .skill-badge:hover { transform: translateY(-1px); }
+    .tab-active { border-bottom: 2px solid #386943; color: #386943; }
+    .tab-inactive { border-bottom: 2px solid transparent; color: #717970; }
+    .verified-badge { background: linear-gradient(135deg, #386943 0%, #75a87d 100%); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto space-y-6">
+
+    <!-- Profile Header -->
+    <div class="bg-white rounded-2xl border border-outline-variant/20 overflow-hidden animate-fade-up">
+        <div class="h-32 bg-gradient-to-r from-primary/20 via-primary/10 to-secondary/20"></div>
+
+        <div class="px-6 pb-6 relative">
+            <!-- Avatar -->
+            <div class="relative -mt-12 inline-block">
+                <div class="w-24 h-24 rounded-2xl bg-primary/20 flex items-center justify-center border-4 border-white shadow-md">
+                    <span class="text-3xl font-bold text-primary">{{ user.prenom|slice:":1" }}{{ user.nom|slice:":1" }}</span>
+                </div>
+                {% if is_owner %}
+                <a href="/profile/edit/" class="absolute bottom-0 right-0 bg-white rounded-full p-1 shadow-md hover:bg-surface-container transition">
+                    <span class="material-symbols-outlined text-sm text-primary">edit</span>
+                </a>
+                {% endif %}
+            </div>
+
+            <!-- Name & Bio -->
+            <div class="flex flex-wrap justify-between items-start mt-3">
+                <div>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <h1 class="text-2xl font-bold text-on-surface">{{ user.prenom }} {{ user.nom }}</h1>
+                        {% if user.is_verified %}
+                        <span class="verified-badge px-2 py-0.5 text-white rounded-full text-xs font-medium inline-flex items-center gap-1">
+                            <span class="material-symbols-outlined text-xs">verified</span>
+                            Vérifié
+                        </span>
+                        {% endif %}
+                        <span class="px-2 py-0.5 bg-primary/10 text-primary rounded-full text-xs font-medium">Mentor</span>
+                    </div>
+                    <p class="text-sm text-on-surface-variant mt-1">{{ user.profil.niveau|default:"Niveau non défini" }} · {{ user.profil.filiere|default:"Filière non définie" }}</p>
+                    <div class="flex items-center gap-3 mt-2">
+                        <span class="inline-flex items-center gap-1 text-xs text-outline">
+                            <span class="material-symbols-outlined text-sm">location_on</span>
+                            Cotonou, Bénin
+                        </span>
+                        <span class="inline-flex items-center gap-1 text-xs text-outline">
+                            <span class="material-symbols-outlined text-sm">link</span>
+                            Membre depuis {{ user.date_joined|date:"F Y" }}
+                        </span>
+                    </div>
+                </div>
+                <div class="flex gap-2 mt-4 md:mt-0">
+                    {% if is_owner %}
+                    <a href="/profile/edit/" class="px-4 py-2 bg-primary text-white rounded-xl text-sm font-medium hover:bg-primary/90 transition-all inline-flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">edit</span>
+                        Modifier
+                    </a>
+                    {% else %}
+                    <a href="/chat/with/{{ user.id }}/" class="px-4 py-2 bg-primary text-white rounded-xl text-sm font-medium hover:bg-primary/90 transition-all inline-flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">chat</span>
+                        Contacter
+                    </a>
+                    {% endif %}
+                    <button class="px-4 py-2 border border-outline-variant rounded-xl text-sm font-medium hover:bg-surface-container transition-all inline-flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">share</span>
+                        Partager
+                    </button>
+                </div>
+            </div>
+
+            <p class="mt-3 text-sm text-on-surface-variant max-w-2xl">{{ user.profil.bio|default:"Aucune bio pour le moment." }}</p>
+
+            <!-- Stats row -->
+            <div class="flex flex-wrap gap-6 mt-4 pt-3 border-t border-outline-variant/20">
+                <div class="inline-flex items-center gap-2">
+                    <span class="material-symbols-outlined text-outline text-sm">people</span>
+                    <span class="text-sm text-on-surface">{{ user.followers_count|default:"0" }} <span class="text-outline">abonnés</span></span>
+                </div>
+                <div class="inline-flex items-center gap-2">
+                    <span class="material-symbols-outlined text-outline text-sm">group_add</span>
+                    <span class="text-sm text-on-surface">{{ user.following_count|default:"0" }} <span class="text-outline">abonnements</span></span>
+                </div>
+                <div class="inline-flex items-center gap-2">
+                    <span class="material-symbols-outlined text-outline text-sm">star</span>
+                    <span class="text-sm text-on-surface">{{ user.rating_moyen|default:"0" }} <span class="text-outline">({{ user.nb_avis|default:"0" }} avis)</span></span>
+                </div>
+                <div class="inline-flex items-center gap-2">
+                    <span class="material-symbols-outlined text-outline text-sm">school</span>
+                    <span class="text-sm text-on-surface">{{ user.profil.total_sessions|default:"0" }} <span class="text-outline">sessions</span></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="border-t border-outline-variant/20 px-6">
+            <div class="flex gap-6 overflow-x-auto">
+                <button class="tab-active py-3 text-sm font-medium" data-tab="overview">Aperçu</button>
+                <button class="tab-inactive py-3 text-sm font-medium" data-tab="sessions">Sessions</button>
+                <button class="tab-inactive py-3 text-sm font-medium" data-tab="avis">Avis</button>
+                <button class="tab-inactive py-3 text-sm font-medium" data-tab="badges">Badges</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overview Tab -->
+    <div id="overviewTab" class="space-y-6 animate-fade-up">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="bg-white rounded-xl p-4 border stat-card">
+                <div class="flex justify-between">
+                    <div><p class="text-xs text-outline uppercase">Taux de réponse</p><p class="text-2xl font-bold">{{ user.profil.response_rate|default:"0" }}%</p></div>
+                    <span class="material-symbols-outlined text-primary">schedule</span>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl p-4 border stat-card">
+                <div class="flex justify-between">
+                    <div><p class="text-xs text-outline uppercase">Impact</p><p class="text-2xl font-bold">2.3k</p></div>
+                    <span class="material-symbols-outlined text-secondary">visibility</span>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl p-4 border stat-card">
+                <div class="flex justify-between">
+                    <div><p class="text-xs text-outline uppercase">Communauté</p><p class="text-2xl font-bold">{{ user.profil.total_sessions|default:"0" }}</p></div>
+                    <span class="material-symbols-outlined text-tertiary">groups</span>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl p-4 border stat-card">
+                <div class="flex justify-between">
+                    <div><p class="text-xs text-outline uppercase">Contribution</p><p class="text-2xl font-bold">45</p></div>
+                    <span class="material-symbols-outlined text-primary">emoji_events</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Left column -->
+            <div class="space-y-6">
+                <div class="bg-white rounded-xl p-5 border">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-semibold flex items-center gap-2"><span class="material-symbols-outlined text-primary">psychology</span>Compétences</h3>
+                        {% if is_owner %}<a href="/profile/edit/" class="text-outline hover:text-primary"><span class="material-symbols-outlined text-sm">edit</span></a>{% endif %}
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        {% for comp in competences %}
+                        <span class="px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm">{{ comp.matiere.nom }}</span>
+                        {% empty %}
+                        <span class="text-sm text-outline">Aucune compétence</span>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-5 border">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-semibold flex items-center gap-2"><span class="material-symbols-outlined text-primary">school</span>Formation</h3>
+                        {% if is_owner %}<a href="/profile/edit/" class="text-outline hover:text-primary"><span class="material-symbols-outlined text-sm">edit</span></a>{% endif %}
+                    </div>
+                    <div class="space-y-4">
+                        <div><p class="font-medium">Master en Intelligence Artificielle</p><p class="text-xs text-outline">IFRI · 2023 - 2025</p></div>
+                        <div><p class="font-medium">Licence en Informatique</p><p class="text-xs text-outline">UAC · 2020 - 2023</p></div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-5 border">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-semibold flex items-center gap-2"><span class="material-symbols-outlined text-primary">translate</span>Langues</h3>
+                        {% if is_owner %}<a href="/profile/edit/" class="text-outline hover:text-primary"><span class="material-symbols-outlined text-sm">edit</span></a>{% endif %}
+                    </div>
+                    <div class="space-y-3">
+                        <div><div class="flex justify-between text-sm"><span>Français</span><span class="text-outline">Natif</span></div><div class="w-full bg-gray-100 rounded-full h-1.5 mt-1"><div class="bg-primary h-1.5 rounded-full" style="width:100%"></div></div></div>
+                        <div><div class="flex justify-between text-sm"><span>Anglais</span><span class="text-outline">Courant (C1)</span></div><div class="w-full bg-gray-100 rounded-full h-1.5 mt-1"><div class="bg-primary h-1.5 rounded-full" style="width:85%"></div></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right column -->
+            <div class="lg:col-span-2 space-y-6">
+                <div class="bg-white rounded-xl p-5 border">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-semibold flex items-center gap-2"><span class="material-symbols-outlined text-primary">grid_view</span>Activité récente</h3>
+                        <span class="text-xs text-outline">2024</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <div class="min-w-[600px]"><div class="grid grid-cols-12 gap-1">{% for i in "123456789101112" %}<div class="space-y-1">{% for j in "1234" %}<div class="w-8 h-8 rounded bg-primary-fixed-dim/30"></div>{% endfor %}</div>{% endfor %}</div></div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-5 border">
+                    <h3 class="font-semibold flex items-center gap-2 mb-4"><span class="material-symbols-outlined text-primary">military_tech</span>Accomplissements</h3>
+                    <div class="flex flex-wrap gap-4">
+                        <div class="flex items-center gap-3 p-2 rounded-xl bg-surface-container/30"><div class="w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center"><span class="material-symbols-outlined text-amber-600">star</span></div><div><p class="text-sm font-medium">Top Mentor</p><p class="text-xs text-outline">Top 5%</p></div></div>
+                        <div class="flex items-center gap-3 p-2 rounded-xl bg-surface-container/30"><div class="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center"><span class="material-symbols-outlined text-emerald-600">emoji_events</span></div><div><p class="text-sm font-medium">Expert</p><p class="text-xs text-outline">50+ sessions</p></div></div>
+                        <div class="flex items-center gap-3 p-2 rounded-xl bg-surface-container/30"><div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center"><span class="material-symbols-outlined text-primary">handshake</span></div><div><p class="text-sm font-medium">Super Mentor</p><p class="text-xs text-outline">25+ avis</p></div></div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-5 border">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-semibold flex items-center gap-2"><span class="material-symbols-outlined text-primary">comment</span>Avis récents</h3>
+                        <a href="#" class="text-xs text-primary">Voir tout</a>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="flex gap-3"><img src="https://randomuser.me/api/portraits/women/68.jpg" class="w-10 h-10 rounded-full"><div><div class="flex items-center gap-2"><span class="text-sm font-medium">Sarah L.</span><div class="text-amber-500 text-sm">★★★★★</div></div><p class="text-sm text-on-surface-variant">"Excellent mentor ! Très pédagogue."</p><span class="text-xs text-outline">Il y a 2 jours</span></div></div>
+                        <div class="flex gap-3"><img src="https://randomuser.me/api/portraits/men/32.jpg" class="w-10 h-10 rounded-full"><div><div class="flex items-center gap-2"><span class="text-sm font-medium">Lucas M.</span><div class="text-amber-500 text-sm">★★★★☆</div></div><p class="text-sm text-on-surface-variant">"Excellente session, je recommande !"</p><span class="text-xs text-outline">Il y a 1 semaine</span></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sessions Tab -->
+    <div id="sessionsTab" class="hidden space-y-4"><div class="bg-white rounded-xl p-6 border text-center"><span class="material-symbols-outlined text-4xl text-outline">event_note</span><h3 class="font-semibold mt-2">Aucune session</h3><p class="text-sm text-outline">Aucune session programmée</p>{% if is_owner %}<a href="/matching/" class="mt-4 inline-block px-4 py-2 bg-primary text-white rounded-lg text-sm">Trouver un mentor</a>{% endif %}</div></div>
+
+    <!-- Avis Tab -->
+    <div id="avisTab" class="hidden space-y-4"><div class="bg-white rounded-xl p-6 border text-center"><p class="text-3xl font-bold">{{ user.rating_moyen|default:"0" }}</p><div class="text-amber-500 text-lg">★★★★☆</div><p class="text-xs text-outline">Basé sur {{ user.nb_avis|default:"0" }} avis</p></div></div>
+
+    <!-- Badges Tab -->
+    <div id="badgesTab" class="hidden"><div class="bg-white rounded-xl p-6 border"><div class="grid grid-cols-2 md:grid-cols-4 gap-4"><div class="text-center p-4"><div class="w-16 h-16 rounded-full bg-amber-500/10 flex items-center justify-center mx-auto"><span class="material-symbols-outlined text-3xl text-amber-600">star</span></div><p class="font-medium text-sm mt-2">Top Mentor</p><p class="text-xs text-outline">Top 5%</p></div><div class="text-center p-4"><div class="w-16 h-16 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto"><span class="material-symbols-outlined text-3xl text-emerald-600">emoji_events</span></div><p class="font-medium text-sm mt-2">Expert</p><p class="text-xs text-outline">50+ sessions</p></div><div class="text-center p-4"><div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto"><span class="material-symbols-outlined text-3xl text-primary">handshake</span></div><p class="font-medium text-sm mt-2">Super Mentor</p><p class="text-xs text-outline">25+ avis</p></div><div class="text-center p-4"><div class="w-16 h-16 rounded-full bg-secondary/10 flex items-center justify-center mx-auto"><span class="material-symbols-outlined text-3xl text-secondary">rocket</span></div><p class="font-medium text-sm mt-2">Rising Star</p><p class="text-xs text-outline">10 sessions/mois</p></div></div></div></div>
+</div>
+
+<script>
+    document.querySelectorAll('[data-tab]').forEach(tab => {
+        tab.addEventListener('click', () => {
+            const tabId = tab.dataset.tab;
+            document.querySelectorAll('[data-tab]').forEach(t => {
+                t.classList.remove('tab-active');
+                t.classList.add('tab-inactive');
+            });
+            tab.classList.remove('tab-inactive');
+            tab.classList.add('tab-active');
+            ['overview', 'sessions', 'avis', 'badges'].forEach(id => {
+                const el = document.getElementById(id + 'Tab');
+                if (el) el.classList.add('hidden');
+            });
+            const activeTab = document.getElementById(tabId + 'Tab');
+            if (activeTab) activeTab.classList.remove('hidden');
+        });
+    });
+</script>
+{% endblock %}

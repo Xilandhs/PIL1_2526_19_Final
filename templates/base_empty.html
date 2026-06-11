@@ -1,0 +1,89 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>{% block title %}MentorLink{% endblock %}</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Inter font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL@20..48,100..700,0..1" rel="stylesheet">
+    
+    <!-- Tailwind config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'surface': '#e9fff0',
+                        'primary': '#386943',
+                        'primary-container': '#75a87d',
+                        'secondary': '#36675a',
+                        'tertiary': '#006a68',
+                        'error': '#ba1a1a',
+                        'error-container': '#ffdad6',
+                        'outline': '#717970',
+                        'outline-variant': '#c1c9be',
+                        'on-surface': '#0d1f17',
+                        'on-surface-variant': '#414941',
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(56, 105, 67, 0.1);
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in-up {
+            animation: fadeInUp 0.5s ease-out;
+        }
+        
+        .step-active {
+            background-color: #386943;
+            color: white;
+        }
+        
+        .step-inactive {
+            background-color: #d2e8da;
+            color: #414941;
+        }
+        
+        .step-completed {
+            background-color: #75a87d;
+            color: white;
+        }
+    </style>
+    
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-gradient-to-br from-surface via-surface to-surface-container-low text-on-surface antialiased">
+    
+    {% block content %}{% endblock %}
+    
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

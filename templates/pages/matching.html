@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+
+{% block title %}Matching - MentorLink{% endblock %}
+
+{% block extra_head %}
+<style>
+    .match-card {
+        transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+    }
+    
+    .match-card:hover {
+        transform: translateY(-4px);
+    }
+    
+    .score-circle {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 18px;
+    }
+    
+    .score-high {
+        background: #e3f9eb;
+        color: #386943;
+    }
+    
+    .score-medium {
+        background: #b6ebd9;
+        color: #36675a;
+    }
+    
+    .score-low {
+        background: #d2e8da;
+        color: #414941;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+    
+    <!-- En-tête -->
+    <div>
+        <h1 class="text-2xl md:text-3xl font-semibold text-on-surface tracking-tight">
+            Matching intelligent
+        </h1>
+        <p class="text-sm text-on-surface-variant mt-1">
+            Découvrez les mentors et étudiants qui correspondent à votre profil académique
+        </p>
+    </div>
+    
+    <!-- Alertes si profil incomplet -->
+    {% if not has_lacunes and not has_competences %}
+    <div class="bg-amber-50 border-amber-500 p-4 rounded-lg">
+        <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-amber-600">warning</span>
+            <div>
+                <p class="text-sm font-medium text-amber-800">Profil incomplet</p>
+                <p class="text-xs text-amber-700">Ajoutez vos compétences et lacunes pour obtenir des matchs personnalisés.</p>
+                <a href="{% url 'profile' %}" class="text-xs text-amber-800 font-medium mt-1 inline-block hover:underline">Compléter mon profil →</a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Section Mentors recommandés -->
+    <div>
+        <div class="flex justify-between items-center mb-4">
+            <div>
+                <h2 class="text-lg font-semibold text-on-surface">Mentors recommandés</h2>
+                <p class="text-xs text-on-surface-variant">Basé sur vos lacunes académiques</p>
+            </div>
+            <span class="text-xs text-outline">{{ mentor_matches|length }} résultat(s)</span>
+        </div>
+        
+        {% if mentor_matches %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {% for match in mentor_matches %}
+            <div class="match-card bg-white rounded-xl p-4 border border-outline-variant/20">
+                <div class="flex justify-between items-start mb-3">
+                    <div class="flex items-center gap-3">
+                        {% if match.user.photo_url %}
+                            <img src="{{ match.user.photo_url }}" class="w-12 h-12 rounded-full object-cover ring-2 ring-primary/20">
+                        {% else %}
+                            <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center ring-2 ring-primary/20">
+                                <span class="text-sm font-semibold text-primary">{{ match.user.prenom|slice:":1" }}{{ match.user.nom|slice:":1" }}</span>
+                            </div>
+                        {% endif %}
+                        <div>
+                            <h3 class="font-semibold text-on-surface">{{ match.user.prenom }} {{ match.user.nom }}</h3>
+                            <p class="text-xs text-outline">{{ match.user.profil.niveau|default:"N/A" }} · {{ match.user.profil.filiere|default:"N/A" }}</p>
+                        </div>
+                    </div>
+                    <div class="score-circle {% if match.score >= 70 %}score-high{% elif match.score >= 40 %}score-medium{% else %}score-low{% endif %}">
+                        {{ match.score|floatformat:0 }}%
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <p class="text-xs text-outline mb-1">Matières communes :</p>
+                    <div class="flex flex-wrap gap-1">
+                        {% for subject in match.common_subjects %}
+                        <span class="text-xs bg-surface-container px-2 py-0.5 rounded-full">{{ subject.matiere.nom|truncatechars:20 }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <div class="flex gap-2 mt-3 pt-2 border-t border-outline-variant/20">
+                    <button class="flex-1 view-mentor-btn px-3 py-1.5 rounded-lg text-sm font-medium bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all" data-id="{{ match.user.id }}">
+                        Voir le profil
+                    </button>
+                    <button class="flex-1 contact-btn px-3 py-1.5 rounded-lg text-sm font-medium border border-primary/20 text-primary hover:bg-primary hover:text-white transition-all" data-id="{{ match.user.id }}">
+                        Contacter
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="bg-white rounded-xl p-8 text-center border border-outline-variant/20">
+            <div class="w-16 h-16 bg-surface-container rounded-full flex items-center justify-center mx-auto mb-3">
+                <span class="material-symbols-outlined text-2xl text-outline">groups</span>
+            </div>
+            <p class="text-sm text-on-surface-variant">Aucun mentor trouvé pour le moment</p>
+            <p class="text-xs text-outline mt-1">Ajoutez des lacunes à votre profil pour recevoir des recommandations</p>
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Section Mentorés potentiels -->
+    <div>
+        <div class="flex justify-between items-center mb-4">
+            <div>
+                <h2 class="text-lg font-semibold text-on-surface">Mentorés potentiels</h2>
+                <p class="text-xs text-on-surface-variant">Qui ont besoin d'aide dans vos domaines d'expertise</p>
+            </div>
+            <span class="text-xs text-outline">{{ mentee_matches|length }} résultat(s)</span>
+        </div>
+        
+        {% if mentee_matches %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {% for match in mentee_matches %}
+            <div class="match-card bg-white rounded-xl p-4 border border-outline-variant/20">
+                <div class="flex justify-between items-start mb-3">
+                    <div class="flex items-center gap-3">
+                        {% if match.user.photo_url %}
+                            <img src="{{ match.user.photo_url }}" class="w-12 h-12 rounded-full object-cover ring-2 ring-primary/20">
+                        {% else %}
+                            <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center ring-2 ring-primary/20">
+                                <span class="text-sm font-semibold text-primary">{{ match.user.prenom|slice:":1" }}{{ match.user.nom|slice:":1" }}</span>
+                            </div>
+                        {% endif %}
+                        <div>
+                            <h3 class="font-semibold text-on-surface">{{ match.user.prenom }} {{ match.user.nom }}</h3>
+                            <p class="text-xs text-outline">{{ match.user.profil.niveau|default:"N/A" }} · {{ match.user.profil.filiere|default:"N/A" }}</p>
+                        </div>
+                    </div>
+                    <div class="score-circle {% if match.score >= 70 %}score-high{% elif match.score >= 40 %}score-medium{% else %}score-low{% endif %}">
+                        {{ match.score|floatformat:0 }}%
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <p class="text-xs text-outline mb-1">Matières à aider :</p>
+                    <div class="flex flex-wrap gap-1">
+                        {% for subject in match.common_subjects %}
+                        <span class="text-xs bg-surface-container px-2 py-0.5 rounded-full">{{ subject.matiere.nom|truncatechars:20 }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <div class="flex gap-2 mt-3 pt-2 border-t border-outline-variant/20">
+                    <button class="flex-1 view-mentee-btn px-3 py-1.5 rounded-lg text-sm font-medium bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all" data-id="{{ match.user.id }}">
+                        Voir le profil
+                    </button>
+                    <button class="flex-1 contact-btn px-3 py-1.5 rounded-lg text-sm font-medium border border-primary/20 text-primary hover:bg-primary hover:text-white transition-all" data-id="{{ match.user.id }}">
+                        Contacter
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="bg-white rounded-xl p-8 text-center border border-outline-variant/20">
+            <div class="w-16 h-16 bg-surface-container rounded-full flex items-center justify-center mx-auto mb-3">
+                <span class="material-symbols-outlined text-2xl text-outline">school</span>
+            </div>
+            <p class="text-sm text-on-surface-variant">Aucun mentoré trouvé pour le moment</p>
+            <p class="text-xs text-outline mt-1">Ajoutez des compétences à votre profil pour aider d'autres étudiants</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    // Gestion des clics sur les boutons
+    document.querySelectorAll('.view-mentor-btn, .view-mentee-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const userId = this.dataset.id;
+            window.location.href = `/profile/user/${userId}/`;
+        });
+    });
+    
+    document.querySelectorAll('.contact-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const userId = this.dataset.id;
+            window.location.href = `/chat/with/${userId}/`;
+        });
+    });
+</script>
+{% endblock %}

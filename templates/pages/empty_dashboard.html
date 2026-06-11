@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - MentorLink{% endblock %}
+
+{% block extra_head %}
+<style>
+    .glass-panel {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(117, 168, 125, 0.2);
+    }
+    
+    .stat-card {
+        transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+    }
+    
+    @keyframes fadeSlideUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .animate-fade-slide {
+        animation: fadeSlideUp 0.4s ease-out forwards;
+    }
+    
+    @keyframes pulse-ring {
+        0% {
+            transform: scale(0.8);
+            opacity: 0.5;
+        }
+        100% {
+            transform: scale(1.5);
+            opacity: 0;
+        }
+    }
+    
+    .animate-pulse-ring {
+        animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="space-y-6 animate-fade-slide">
+    
+    <!-- Breadcrumbs -->
+    <nav class="flex items-center gap-1 text-sm text-outline">
+        <span class="hover:text-primary transition-colors cursor-pointer">Accueil</span>
+        <span class="material-symbols-outlined text-sm align-middle">chevron_right</span>
+        <span class="text-primary">Tableau de bord</span>
+    </nav>
+    
+    <!-- En-tête -->
+    <div>
+        <h1 class="text-2xl md:text-3xl font-semibold text-on-surface tracking-tight">
+            Bonjour, Thomas
+        </h1>
+        <p class="text-sm text-on-surface-variant mt-1">
+            Commencez votre parcours académique avec MentorLink
+        </p>
+    </div>
+    
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-white p-4 rounded-xl border border-outline-variant/20 stat-card">
+            <p class="text-xs text-outline uppercase tracking-wide mb-1">Total Mentors</p>
+            <p class="text-2xl font-bold text-primary">124</p>
+            <p class="text-xs text-emerald-600 mt-1">+12 cette semaine</p>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-outline-variant/20 stat-card">
+            <p class="text-xs text-outline uppercase tracking-wide mb-1">Heures d'étude</p>
+            <p class="text-2xl font-bold text-tertiary">0h</p>
+            <p class="text-xs text-outline mt-1">Commencez une session</p>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-outline-variant/20 stat-card">
+            <p class="text-xs text-outline uppercase tracking-wide mb-1">Sessions actives</p>
+            <p class="text-2xl font-bold text-secondary">0</p>
+            <p class="text-xs text-outline mt-1">Aucune session en cours</p>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-outline-variant/20 stat-card">
+            <p class="text-xs text-outline uppercase tracking-wide mb-1">Progression</p>
+            <div class="w-full bg-surface-container h-2 rounded-full mt-3">
+                <div class="bg-tertiary w-0 h-full rounded-full"></div>
+            </div>
+            <p class="text-xs text-outline mt-2">0% complété</p>
+        </div>
+    </div>
+    
+    <!-- Main Content: Bento Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Colonne principale - Section Matching -->
+        <div class="lg:col-span-8">
+            <div class="glass-panel rounded-2xl p-8 flex flex-col items-center justify-center text-center min-h-[450px]">
+                <!-- Cercle animé -->
+                <div class="relative mb-6">
+                    <div class="absolute -inset-4 bg-primary/10 rounded-full blur-2xl animate-pulse-ring"></div>
+                    <div class="relative bg-white w-24 h-24 rounded-full flex items-center justify-center shadow-md border border-outline-variant">
+                        <span class="material-symbols-outlined text-5xl text-primary">search</span>
+                    </div>
+                </div>
+                
+                <h2 class="text-xl md:text-2xl font-semibold text-on-surface mb-2">
+                    Aucun match trouvé pour le moment
+                </h2>
+                <p class="text-base text-on-surface-variant max-w-md mx-auto mb-6">
+                    Élargissez vos disponibilités pour augmenter vos chances de trouver un mentor correspondant à vos besoins académiques.
+                </p>
+                
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="/profile/" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl text-sm font-medium shadow-md hover:bg-primary/90 transition-all">
+                        <span class="material-symbols-outlined text-lg align-middle">edit</span>
+                        Ajuster mon profil
+                    </a>
+                    <a href="/feed/" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-surface-container border border-outline-variant rounded-xl text-sm font-medium hover:bg-surface-container-high transition-all">
+                        <span class="material-symbols-outlined text-lg align-middle">explore</span>
+                        Explorer les mentors
+                    </a>
+                </div>
+                
+                <!-- Carte astuce -->
+                <div class="mt-8 flex items-start gap-3 bg-surface-container-lowest p-4 rounded-xl border border-dashed border-outline-variant max-w-md">
+                    <span class="material-symbols-outlined text-tertiary">lightbulb</span>
+                    <div class="text-left">
+                        <p class="text-sm font-medium text-on-surface mb-0.5">💡 Astuce MentorLink</p>
+                        <p class="text-xs text-on-surface-variant">
+                            Les utilisateurs ayant plus de 3 créneaux horaires par semaine trouvent un match 2x plus vite.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Colonne latérale - Activité et conseils -->
+        <div class="lg:col-span-4 space-y-6">
+            
+            <!-- Top Catégories -->
+            <div class="bg-white rounded-xl p-5 border border-outline-variant/20">
+                <h3 class="text-sm font-semibold text-on-surface uppercase tracking-wider mb-3">
+                    Top catégories
+                </h3>
+                <div class="flex flex-wrap gap-2">
+                    <span class="px-3 py-1.5 bg-surface-container text-secondary rounded-full text-xs font-medium">Mathématiques</span>
+                    <span class="px-3 py-1.5 bg-surface-container text-secondary rounded-full text-xs font-medium">Informatique</span>
+                    <span class="px-3 py-1.5 bg-surface-container text-secondary rounded-full text-xs font-medium">Économie</span>
+                    <span class="px-3 py-1.5 bg-surface-container text-secondary rounded-full text-xs font-medium">Physique</span>
+                    <span class="px-3 py-1.5 bg-surface-container text-secondary rounded-full text-xs font-medium">Chimie</span>
+                    <span class="px-3 py-1.5 bg-surface-container text-secondary rounded-full text-xs font-medium">Droit</span>
+                </div>
+            </div>
+            
+            <!-- Prochaines étapes (Onboarding checklist) -->
+            <div class="bg-white rounded-xl p-5 border border-outline-variant/20">
+                <h3 class="text-sm font-semibold text-on-surface uppercase tracking-wider mb-3">
+                    Prochaines étapes
+                </h3>
+                <ul class="space-y-3">
+                    <li class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-emerald-500 text-lg">check_circle</span>
+                        <span class="text-sm text-on-surface line-through opacity-60">Compléter le profil</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-primary text-lg">radio_button_unchecked</span>
+                        <span class="text-sm text-on-surface">Ajouter des sujets d'intérêt</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-primary text-lg">radio_button_unchecked</span>
+                        <span class="text-sm text-on-surface">Définir mes disponibilités</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-primary text-lg">radio_button_unchecked</span>
+                        <span class="text-sm text-on-surface">Postuler à une offre</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Bannière d'aide -->
+            <div class="relative rounded-xl overflow-hidden h-48 group cursor-pointer">
+                <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=400&h=200&fit=crop" 
+                     alt="Étudiants en collaboration"
+                     class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                <div class="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent"></div>
+                <div class="absolute bottom-0 left-0 p-4">
+                    <p class="text-white font-semibold text-base mb-1">Besoin d'aide ?</p>
+                    <p class="text-white/80 text-xs">Découvrez comment fonctionne le mentorat</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,267 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - MentorLink{% endblock %}
+
+{% block content %}
+<!-- Stats Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div class="bg-white rounded-2xl p-5 border border-outline-variant/20">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-xs font-medium text-outline uppercase tracking-wide">Sessions totales</p>
+                <p class="text-3xl font-bold text-on-surface mt-2">{{ total_sessions|default:"0" }}</p>
+                <p class="text-xs text-emerald-600 mt-1 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-sm align-middle">trending_up</span>
+                    +{{ sessions_this_week|default:"0" }} cette semaine
+                </p>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-primary text-2xl align-middle">school</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="bg-white rounded-2xl p-5 border border-outline-variant/20">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-xs font-medium text-outline uppercase tracking-wide">Heures consacrées</p>
+                <p class="text-3xl font-bold text-on-surface mt-2">{{ total_hours|default:"0" }}</p>
+                <p class="text-xs text-tertiary mt-1 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-sm align-middle">schedule</span>
+                    {{ avg_hours_per_session|default:"0" }}h moyenne/session
+                </p>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-tertiary/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-tertiary text-2xl align-middle">timer</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="bg-white rounded-2xl p-5 border border-outline-variant/20">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-xs font-medium text-outline uppercase tracking-wide">Note moyenne</p>
+                <p class="text-3xl font-bold text-on-surface mt-2">{{ avg_rating|default:"0" }}</p>
+                <p class="text-xs text-secondary mt-1 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-sm align-middle">star</span>
+                    Sur 5 étoiles
+                </p>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-secondary text-2xl align-middle">star</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="bg-white rounded-2xl p-5 border border-outline-variant/20">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-xs font-medium text-outline uppercase tracking-wide">Taux de réussite</p>
+                <p class="text-3xl font-bold text-on-surface mt-2">{{ success_rate|default:"0" }}%</p>
+                <p class="text-xs text-emerald-600 mt-1 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-sm align-middle">trending_up</span>
+                    Excellent
+                </p>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-primary text-2xl align-middle">trending_up</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Next Session & Quick Actions -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-8">
+    <!-- Next Session Card -->
+    <div class="lg:col-span-2 relative overflow-hidden rounded-2xl bg-gradient-to-r from-primary to-primary/90 p-6 text-white shadow-xl">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full blur-2xl"></div>
+        <div class="relative z-10">
+            <p class="text-sm font-medium text-white/70 uppercase tracking-wider flex items-center gap-2">
+                <span class="material-symbols-outlined text-sm align-middle">schedule</span>
+                Prochaine session
+            </p>
+            {% if next_session %}
+                <h3 class="text-2xl font-bold mt-2">{{ next_session.annonce.titre|default:"Session de mentorat" }}</h3>
+                <div class="flex flex-wrap gap-4 mt-3 text-sm text-white/80">
+                    <div class="flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-sm align-middle">calendar_today</span>
+                        <span>{{ next_session.session_date|date:"d/m/Y" }} à {{ next_session.session_date|date:"H:i" }}</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-sm align-middle">person</span>
+                        <span>{% if next_session.mentor == user %}{{ next_session.mentore.prenom }} {{ next_session.mentore.nom }}{% else %}{{ next_session.mentor.prenom }} {{ next_session.mentor.nom }}{% endif %}</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-sm align-middle">schedule</span>
+                        <span>{{ next_session.duree_minutes }} min</span>
+                    </div>
+                </div>
+                <div class="flex gap-3 mt-5">
+                    <button class="bg-white text-primary px-5 py-2 rounded-xl text-sm font-semibold hover:shadow-lg transition-all flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm align-middle">video_call</span>
+                        Rejoindre
+                    </button>
+                    <button class="border border-white/30 text-white px-5 py-2 rounded-xl text-sm font-medium hover:bg-white/10 transition-all flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm align-middle">info</span>
+                        Détails
+                    </button>
+                </div>
+            {% else %}
+                <h3 class="text-xl font-bold mt-2">Aucune session prévue</h3>
+                <p class="text-sm text-white/80 mt-2">Explorez les mentors pour commencer !</p>
+                <div class="flex gap-3 mt-5">
+                    <a href="/feed/" class="bg-white text-primary px-5 py-2 rounded-xl text-sm font-semibold hover:shadow-lg transition-all flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm align-middle">explore</span>
+                        Explorer
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="bg-white rounded-2xl p-5 border border-outline-variant/20">
+        <h3 class="text-sm font-semibold text-on-surface mb-3 flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary text-lg align-middle">flash_on</span>
+            Actions rapides
+        </h3>
+        <div class="space-y-2">
+            <a href="/feed/" class="w-full flex items-center gap-3 p-3 rounded-xl bg-surface-container/50 hover:bg-surface-container transition-all group">
+                <span class="material-symbols-outlined text-primary align-middle">add_comment</span>
+                <span class="text-sm font-medium text-on-surface">Nouvelle demande de mentorat</span>
+                <span class="material-symbols-outlined text-outline text-sm ml-auto group-hover:translate-x-1 transition align-middle">arrow_forward</span>
+            </a>
+            <a href="/sessions/" class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-surface-container transition-all group">
+                <span class="material-symbols-outlined text-tertiary align-middle">schedule</span>
+                <span class="text-sm font-medium text-on-surface">Voir mes sessions</span>
+                <span class="material-symbols-outlined text-outline text-sm ml-auto group-hover:translate-x-1 transition align-middle">arrow_forward</span>
+            </a>
+            <a href="/my-feed/" class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-surface-container transition-all group">
+                <span class="material-symbols-outlined text-secondary align-middle">upload_file</span>
+                <span class="text-sm font-medium text-on-surface">Partager une ressource</span>
+                <span class="material-symbols-outlined text-outline text-sm ml-auto group-hover:translate-x-1 transition align-middle">arrow_forward</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Upcoming Sessions -->
+<div class="mb-8">
+    <div class="flex justify-between items-end mb-4">
+        <div>
+            <h2 class="text-lg font-semibold text-on-surface">Sessions à venir</h2>
+            <p class="text-xs text-on-surface-variant mt-0.5">Vos prochaines sessions</p>
+        </div>
+        <a href="/sessions/" class="text-sm text-primary font-medium hover:underline flex items-center gap-1">
+            Voir tout
+            <span class="material-symbols-outlined text-sm align-middle">arrow_forward</span>
+        </a>
+    </div>
+    <div class="space-y-3">
+        {% for session in upcoming_sessions %}
+        <div class="flex items-center justify-between p-4 bg-white rounded-xl border border-outline-variant/20">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-primary align-middle">school</span>
+                </div>
+                <div>
+                    <p class="text-sm font-semibold text-on-surface">{{ session.annonce.titre|default:"Session de mentorat" }}</p>
+                    <p class="text-xs text-on-surface-variant">Avec {% if session.mentor == user %}{{ session.mentore.prenom }} {{ session.mentore.nom }}{% else %}{{ session.mentor.prenom }} {{ session.mentor.nom }}{% endif %}</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="text-xs text-outline">{{ session.session_date|date:"d/m/Y" }} · {{ session.session_date|date:"H:i" }}</span>
+                <button class="p-1.5 rounded-lg hover:bg-surface-container transition">
+                    <span class="material-symbols-outlined text-outline text-sm align-middle">more_vert</span>
+                </button>
+            </div>
+        </div>
+        {% empty %}
+        <div class="text-center py-8 bg-white rounded-xl border border-outline-variant/20">
+            <p class="text-sm text-on-surface-variant">Aucune session à venir</p>
+            <a href="/feed/" class="text-primary text-sm mt-2 inline-block">Explorer les annonces →</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Recent Activity & Progress -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+    <!-- Recent Activity -->
+    <div class="bg-white rounded-2xl p-5 border border-outline-variant/20">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-sm font-semibold text-on-surface flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary text-lg align-middle">history</span>
+                Activités récentes
+            </h3>
+            <span class="material-symbols-outlined text-outline text-sm cursor-pointer align-middle">more_horiz</span>
+        </div>
+        <div class="space-y-3">
+            {% for msg in recent_messages|slice:":3" %}
+            <div class="flex items-start gap-3 pb-3 border-b border-outline-variant/20">
+                <div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-secondary text-sm align-middle">chat_bubble</span>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-on-surface">Message de {{ msg.expediteur.prenom }}</p>
+                    <p class="text-xs text-on-surface-variant">{{ msg.contenu|truncatechars:50 }}</p>
+                    <span class="text-2xs text-outline mt-1 block">{{ msg.created_at|timesince }}</span>
+                </div>
+            </div>
+            {% empty %}
+            <div class="text-center py-4">
+                <p class="text-sm text-outline">Aucune activité récente</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <!-- Progress -->
+    <div class="bg-white rounded-2xl p-5 border border-outline-variant/20">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-sm font-semibold text-on-surface flex items-center gap-2">
+                <span class="material-symbols-outlined text-tertiary text-lg align-middle">analytics</span>
+                Progression académique
+            </h3>
+            <span class="text-xs text-primary font-medium">+{{ sessions_this_week|default:"0" }} ce mois</span>
+        </div>
+        <div class="space-y-4">
+            <div>
+                <div class="flex justify-between text-xs text-on-surface-variant mb-1">
+                    <span>Sessions complétées</span>
+                    <span>{{ completed_sessions|default:"0" }}/{{ total_sessions|default:"0" }}</span>
+                </div>
+                <div class="h-2 bg-surface-container rounded-full overflow-hidden">
+                    <div class="h-full bg-primary rounded-full" style="width: {% if total_sessions > 0 %}{{ completed_sessions|default:0|divisibleby:total_sessions }}{% else %}0{% endif %}%;"></div>
+                </div>
+            </div>
+            <div>
+                <div class="flex justify-between text-xs text-on-surface-variant mb-1">
+                    <span>Objectif mensuel</span>
+                    <span>{{ success_rate|default:"0" }}%</span>
+                </div>
+                <div class="h-2 bg-surface-container rounded-full overflow-hidden">
+                    <div class="h-full bg-secondary rounded-full" style="width: {{ success_rate|default:"0" }}%;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-5 pt-3 border-t border-outline-variant/20">
+            <div class="flex items-center justify-between">
+                <div class="text-center">
+                    <p class="text-2xl font-bold text-on-surface">{{ total_sessions|default:"0" }}</p>
+                    <p class="text-2xs text-outline uppercase">Sessions</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-2xl font-bold text-on-surface">{{ total_hours|default:"0" }}</p>
+                    <p class="text-2xs text-outline uppercase">Heures</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-2xl font-bold text-on-surface">{{ success_rate|default:"0" }}%</p>
+                    <p class="text-2xs text-outline uppercase">Réussite</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

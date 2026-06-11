@@ -1,0 +1,528 @@
+{% extends 'base.html' %}
+
+{% block title %}Le Flux - MentorLink{% endblock %}
+
+{% block extra_head %}
+<style>
+    .feed-card {
+        transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+    }
+    
+    .feed-card:hover {
+        transform: translateY(-4px);
+    }
+    
+    @keyframes likePop {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.3); }
+        100% { transform: scale(1); }
+    }
+    
+    .like-animation {
+        animation: likePop 0.3s ease-out;
+    }
+    
+    .feed-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+        gap: 24px;
+    }
+    
+    @media (max-width: 768px) {
+        .feed-grid {
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+    }
+    
+    .filter-glass {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(56, 105, 67, 0.08);
+    }
+    
+    .line-clamp-3 {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    @keyframes modalSlideIn {
+        from {
+            opacity: 0;
+            transform: scale(0.95) translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+    }
+    
+    .modal-animate {
+        animation: modalSlideIn 0.3s ease-out;
+    }
+    
+    .bg-warning\/10 {
+        background-color: rgba(245, 158, 11, 0.1);
+    }
+    
+    .text-warning {
+        color: #f59e0b;
+    }
+    
+    .border-warning\/20 {
+        border-color: rgba(245, 158, 11, 0.2);
+    }
+    
+    .text-warning-800 {
+        color: #92400e;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mb-6 space-y-4">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-2xl md:text-3xl font-semibold text-on-surface tracking-tight">Le Flux</h1>
+            <p class="text-sm text-on-surface-variant mt-1">Découvrez les annonces d'entraide et de mentorat</p>
+        </div>
+        <div class="flex gap-2 overflow-x-auto pb-2">
+            <button id="openPublishModal" class="px-5 py-2.5 bg-primary text-white rounded-full text-sm font-medium flex items-center gap-2 hover:bg-primary/90 transition-all shadow-sm">
+                <span class="material-symbols-outlined text-lg">add</span>
+                Publier une annonce
+            </button>
+        </div>
+    </div>
+    
+    <!-- Filtres -->
+    <form method="GET" action="/feed/" class="filter-glass rounded-2xl p-4 flex flex-wrap gap-4 items-end shadow-sm">
+        <div class="flex-1 min-w-[150px]">
+            <label class="block text-xs font-medium text-on-surface-variant mb-1">Matière</label>
+            <select name="subject" class="w-full bg-white border border-outline-variant/30 rounded-xl px-3 py-2 text-sm">
+                <option value="all" {% if subject_filter == 'all' %}selected{% endif %}>Toutes les matières</option>
+                {% for matiere in matieres %}
+                <option value="{{ matiere.id }}" {% if subject_filter|stringformat:"s" == matiere.id|stringformat:"s" %}selected{% endif %}>{{ matiere.nom }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="flex-1 min-w-[150px]">
+            <label class="block text-xs font-medium text-on-surface-variant mb-1">Type</label>
+            <select name="type" class="w-full bg-white border border-outline-variant/30 rounded-xl px-3 py-2 text-sm">
+                <option value="all" {% if type_filter == 'all' %}selected{% endif %}>Tous les types</option>
+                <option value="offre" {% if type_filter == 'offre' %}selected{% endif %}>Offres de mentorat</option>
+                <option value="demande" {% if type_filter == 'demande' %}selected{% endif %}>Demandes d'aide</option>
+            </select>
+        </div>
+        <div class="flex-1 min-w-[150px]">
+            <label class="block text-xs font-medium text-on-surface-variant mb-1">Disponibilité</label>
+            <select name="availability" class="w-full bg-white border border-outline-variant/30 rounded-xl px-3 py-2 text-sm">
+                <option value="all" {% if availability_filter == 'all' %}selected{% endif %}>N'importe quand</option>
+                <option value="online" {% if availability_filter == 'online' %}selected{% endif %}>En ligne uniquement</option>
+                <option value="onsite" {% if availability_filter == 'onsite' %}selected{% endif %}>Présentiel uniquement</option>
+            </select>
+        </div>
+        <div>
+            <button type="submit" class="bg-secondary text-white px-6 py-2 rounded-xl text-sm font-medium hover:bg-secondary/90 transition-all">
+                Appliquer
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Grille des annonces -->
+<div class="feed-grid">
+    {% for annonce in annonces %}
+    <div class="bg-white rounded-2xl p-5 border border-outline-variant/10 feed-card shadow-sm" data-post-id="{{ annonce.id }}">
+        <div class="flex justify-between items-start mb-4">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center ring-2 ring-primary/20">
+                    <span class="text-sm font-semibold text-primary">{{ annonce.auteur.prenom|slice:":1" }}{{ annonce.auteur.nom|slice:":1" }}</span>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-on-surface">{{ annonce.auteur.prenom }} {{ annonce.auteur.nom }}</h3>
+                    <p class="text-xs text-outline">{{ annonce.auteur.profil.niveau|default:"Niveau" }} · {{ annonce.auteur.profil.filiere|default:"Filière" }}</p>
+                    <div class="flex items-center gap-1 mt-0.5">
+                        <span class="material-symbols-outlined text-amber-500 text-sm">star</span>
+                        <span class="text-xs text-on-surface-variant">{{ annonce.auteur.rating_moyen|default:"0" }}</span>
+                        <span class="text-xs text-outline">({{ annonce.auteur.nb_avis|default:"0" }} avis)</span>
+                    </div>
+                </div>
+            </div>
+            <span class="px-3 py-1 rounded-full text-xs font-medium {% if annonce.type == 'offre' %}bg-primary/10 text-primary{% else %}bg-tertiary/10 text-tertiary{% endif %}">
+                {% if annonce.type == 'offre' %}Offre de mentorat{% else %}Demande d'aide{% endif %}
+            </span>
+        </div>
+        
+        <div class="mb-3">
+            <span class="inline-block bg-secondary/10 text-secondary px-2 py-0.5 rounded-full text-xs font-medium mb-2">
+                {{ annonce.matiere.nom }}
+            </span>
+            <h4 class="font-semibold text-on-surface mb-2">{{ annonce.titre }}</h4>
+            <p class="text-sm text-on-surface-variant line-clamp-3">{{ annonce.description }}</p>
+        </div>
+        
+        <div class="flex items-center gap-2 mb-3">
+            <span class="text-xs text-outline flex items-center gap-1">
+                <span class="material-symbols-outlined text-sm">event_available</span>
+                {{ annonce.places_restantes }} place{{ annonce.places_restantes|pluralize }} disponible{{ annonce.places_restantes|pluralize }}
+            </span>
+        </div>
+        
+        <div class="pt-3 border-t border-outline-variant/10 flex items-center justify-between">
+            <div class="flex items-center gap-3 text-xs text-outline">
+                <span class="flex items-center gap-1">
+                    <span class="material-symbols-outlined text-sm">{% if annonce.format == 'en_ligne' %}videocam{% elif annonce.format == 'presentiel' %}location_on{% else %}language{% endif %}</span>
+                    {% if annonce.format == 'en_ligne' %}En ligne{% elif annonce.format == 'presentiel' %}Présentiel{% else %}Mixte{% endif %}
+                </span>
+                <span>{{ annonce.created_at|timesince }}</span>
+            </div>
+            <div class="flex items-center gap-3">
+                <button class="like-btn flex items-center gap-1 text-sm {% if annonce.user_has_liked %}text-primary{% else %}text-outline{% endif %} hover:text-primary transition-colors" data-id="{{ annonce.id }}">
+                    <span class="material-symbols-outlined text-lg {% if annonce.user_has_liked %}text-primary{% endif %}">{% if annonce.user_has_liked %}favorite{% else %}favorite_border{% endif %}</span>
+                    <span class="likes-count">{{ annonce.likes|default:0 }}</span>
+                </button>
+                <button class="comment-btn flex items-center gap-1 text-sm text-outline hover:text-primary transition-colors" data-id="{{ annonce.id }}">
+                    <span class="material-symbols-outlined text-lg">comment</span>
+                    <span>{{ annonce.candidatures.count|default:0 }}</span>
+                </button>
+                <button class="apply-btn px-3 py-1.5 rounded-lg text-sm font-medium {% if annonce.type == 'offre' %}bg-primary text-white hover:bg-primary/90{% else %}bg-secondary/10 text-secondary hover:bg-secondary/20{% endif %} transition-all" data-id="{{ annonce.id }}">
+                    {% if annonce.type == 'offre' %}Postuler{% else %}Proposer mon aide{% endif %}
+                </button>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-span-full text-center py-12">
+        <div class="w-20 h-20 bg-surface-container rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="material-symbols-outlined text-3xl text-outline">inbox</span>
+        </div>
+        <h3 class="text-lg font-semibold text-on-surface">Aucune annonce</h3>
+        <p class="text-sm text-on-surface-variant mt-1">Aucune annonce ne correspond à vos critères</p>
+        <button id="emptyCreateBtn" class="mt-4 px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium">Publier une annonce</button>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Modal de publication -->
+<div id="publishModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl w-full max-w-lg mx-4 overflow-hidden shadow-2xl modal-animate">
+        <div class="p-5 border-b border-outline-variant/20 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-primary">add_circle</span>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-on-surface">Nouvelle annonce</h3>
+                    <p class="text-xs text-outline">Publiez une offre ou une demande</p>
+                </div>
+            </div>
+            <button id="closeModalBtn" class="p-1 rounded-lg hover:bg-surface-container transition">
+                <span class="material-symbols-outlined text-outline">close</span>
+            </button>
+        </div>
+        <form method="POST" action="/feed/create/" class="p-5 space-y-4">
+            {% csrf_token %}
+            <div>
+                <label class="block text-sm font-medium text-on-surface mb-2">Type d'annonce</label>
+                <div class="flex gap-3">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="radio" name="type" value="offre" class="w-4 h-4 text-primary" checked>
+                        <span class="text-sm">Offre de mentorat</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="radio" name="type" value="demande" class="w-4 h-4 text-primary">
+                        <span class="text-sm">Demande d'aide</span>
+                    </label>
+                </div>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-on-surface mb-1">Matière *</label>
+                <select name="matiere" class="w-full bg-white border border-outline-variant/30 rounded-xl px-3 py-2 text-sm" required>
+                    <option value="">Sélectionner une matière</option>
+                    {% for matiere in matieres %}
+                    <option value="{{ matiere.id }}">{{ matiere.nom }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-on-surface mb-1">Titre *</label>
+                <input type="text" name="titre" placeholder="Ex: Aide pour les TPs d'algorithmique" 
+                       class="w-full bg-white border border-outline-variant/30 rounded-xl px-3 py-2 text-sm" required>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-on-surface mb-1">Description *</label>
+                <textarea name="description" rows="4" placeholder="Décrivez votre annonce..." 
+                          class="w-full bg-white border border-outline-variant/30 rounded-xl px-3 py-2 text-sm resize-none" required></textarea>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-on-surface mb-1">Format</label>
+                <select name="format" class="w-full bg-white border border-outline-variant/30 rounded-xl px-3 py-2 text-sm">
+                    <option value="en_ligne">En ligne (Zoom/Meet)</option>
+                    <option value="presentiel">Présentiel</option>
+                    <option value="les_deux">Les deux</option>
+                </select>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-on-surface mb-1">Places disponibles</label>
+                <input type="number" name="places_max" min="1" max="10" value="3"
+                       class="w-full bg-white border border-outline-variant/30 rounded-xl px-3 py-2 text-sm">
+            </div>
+            
+            <button type="submit" class="w-full bg-primary text-white py-3 rounded-xl font-medium hover:bg-primary/90 transition-all">
+                Publier l'annonce
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Modal de candidature stylée -->
+<div id="candidatureModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl w-full max-w-md mx-4 overflow-hidden shadow-2xl modal-animate">
+        <div class="p-5 border-b border-outline-variant/20 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-primary">how_to_reg</span>
+                </div>
+                <div>
+                    <h3 id="candidatureTitle" class="text-lg font-semibold text-on-surface">Postuler</h3>
+                    <p id="candidatureSubtitle" class="text-xs text-outline">Envoyez votre candidature</p>
+                </div>
+            </div>
+            <button id="closeCandidatureModal" class="p-1 rounded-lg hover:bg-surface-container transition">
+                <span class="material-symbols-outlined text-outline">close</span>
+            </button>
+        </div>
+        
+        <form id="candidatureForm" class="p-5 space-y-4">
+            {% csrf_token %}
+            <input type="hidden" id="candidatureAnnonceId" name="annonce_id" value="">
+            
+            <!-- Informations de l'annonce -->
+            <div class="bg-surface-container/30 rounded-xl p-3">
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="material-symbols-outlined text-primary text-sm">description</span>
+                    <span class="text-xs font-medium text-on-surface-variant">Annonce</span>
+                </div>
+                <p id="candidatureAnnonceTitre" class="text-sm font-medium text-on-surface">Chargement...</p>
+                <p id="candidatureAnnonceAuteur" class="text-xs text-outline mt-1"></p>
+            </div>
+            
+            <!-- Message -->
+            <div>
+                <label class="block text-sm font-medium text-on-surface mb-1">Message d'accompagnement</label>
+                <textarea id="candidatureMessage" name="message" rows="4" 
+                          placeholder="Dites pourquoi vous êtes intéressé(e), vos disponibilités, etc..."
+                          class="w-full px-4 py-2.5 bg-white border border-outline-variant/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none text-sm"></textarea>
+                <p class="text-xs text-outline mt-1">Ce message sera visible par l'auteur de l'annonce</p>
+            </div>
+            
+            <!-- Engagement -->
+            <div class="bg-warning/10 rounded-xl p-3 border border-warning/20">
+                <div class="flex items-start gap-2">
+                    <span class="material-symbols-outlined text-warning text-sm">info</span>
+                    <div>
+                        <p class="text-xs font-medium text-warning-800">Engagement académique</p>
+                        <p class="text-xs text-on-surface-variant mt-0.5">En postulant, vous vous engagez à honorer votre candidature. Les annulations abusives seront sanctionnées.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex gap-3 pt-2">
+                <button type="button" id="cancelCandidatureBtn" class="flex-1 px-4 py-2.5 border border-outline-variant rounded-xl text-sm font-medium hover:bg-surface-container transition-all">
+                    Annuler
+                </button>
+                <button type="submit" class="flex-1 bg-primary text-white py-2.5 rounded-xl text-sm font-medium hover:bg-primary/90 transition-all flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined text-sm">send</span>
+                    Envoyer ma candidature
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    const csrfToken = '{{ csrf_token }}';
+    
+    // Likes
+    document.querySelectorAll('.like-btn').forEach(btn => {
+        btn.addEventListener('click', async function(e) {
+            e.preventDefault();
+            const postId = this.dataset.id;
+            const icon = this.querySelector('.material-symbols-outlined');
+            const countSpan = this.querySelector('.likes-count');
+            
+            try {
+                const response = await fetch(`/feed/${postId}/like/`, {
+                    method: 'POST',
+                    headers: { 
+                        'X-CSRFToken': csrfToken,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const data = await response.json();
+                
+                if (data.liked) {
+                    icon.textContent = 'favorite';
+                    this.classList.add('text-primary');
+                    icon.classList.add('like-animation');
+                    setTimeout(() => icon.classList.remove('like-animation'), 300);
+                } else {
+                    icon.textContent = 'favorite_border';
+                    this.classList.remove('text-primary');
+                }
+                countSpan.textContent = data.likes_count;
+            } catch (error) {
+                console.error('Erreur:', error);
+            }
+        });
+    });
+    
+    // Modal de candidature stylée
+    const candidatureModal = document.getElementById('candidatureModal');
+    const closeCandidatureModal = document.getElementById('closeCandidatureModal');
+    const cancelCandidatureBtn = document.getElementById('cancelCandidatureBtn');
+    const candidatureForm = document.getElementById('candidatureForm');
+    const candidatureAnnonceId = document.getElementById('candidatureAnnonceId');
+    const candidatureAnnonceTitre = document.getElementById('candidatureAnnonceTitre');
+    const candidatureAnnonceAuteur = document.getElementById('candidatureAnnonceAuteur');
+    const candidatureMessage = document.getElementById('candidatureMessage');
+    let currentAnnonceId = null;
+    
+    // Ouvrir la modal de candidature
+    async function openCandidatureModal(annonceId) {
+        currentAnnonceId = annonceId;
+        candidatureAnnonceId.value = annonceId;
+        candidatureMessage.value = "";
+        
+        candidatureAnnonceTitre.textContent = "Chargement...";
+        candidatureAnnonceAuteur.textContent = "";
+        
+        try {
+            const response = await fetch(`/feed/${annonceId}/candidature/`, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            });
+            const data = await response.json();
+            
+            candidatureAnnonceTitre.textContent = data.titre;
+            candidatureAnnonceAuteur.textContent = `par ${data.auteur} • ${data.places_restantes} place${data.places_restantes > 1 ? 's' : ''} disponible${data.places_restantes > 1 ? 's' : ''}`;
+            
+            candidatureModal.classList.remove('hidden');
+            candidatureModal.classList.add('flex');
+        } catch (error) {
+            console.error('Erreur:', error);
+            alert('Impossible de charger les informations de l\'annonce');
+        }
+    }
+    
+    // Fermer la modal
+    function closeCandidatureModalFunc() {
+        candidatureModal.classList.add('hidden');
+        candidatureModal.classList.remove('flex');
+    }
+    
+    // Soumettre la candidature
+    if (candidatureForm) {
+        candidatureForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const message = candidatureMessage.value.trim();
+            const formData = new FormData();
+            formData.append('message', message);
+            formData.append('csrfmiddlewaretoken', csrfToken);
+            
+            const submitBtn = candidatureForm.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="material-symbols-outlined text-sm animate-spin">progress_activity</span> Envoi...';
+            
+            try {
+                const response = await fetch(`/feed/${currentAnnonceId}/apply/`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    closeCandidatureModalFunc();
+                    alert('✅ Votre candidature a été envoyée avec succès !');
+                    window.location.reload();
+                } else {
+                    const error = await response.json();
+                    alert('❌ ' + (error.error || 'Une erreur est survenue'));
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('❌ Une erreur est survenue. Veuillez réessayer.');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        });
+    }
+    
+    // Écouteurs pour fermer la modal
+    if (closeCandidatureModal) {
+        closeCandidatureModal.addEventListener('click', closeCandidatureModalFunc);
+    }
+    if (cancelCandidatureBtn) {
+        cancelCandidatureBtn.addEventListener('click', closeCandidatureModalFunc);
+    }
+    if (candidatureModal) {
+        candidatureModal.addEventListener('click', (e) => {
+            if (e.target === candidatureModal) closeCandidatureModalFunc();
+        });
+    }
+    
+    // Boutons de candidature
+    document.querySelectorAll('.apply-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const postId = btn.dataset.id;
+            openCandidatureModal(postId);
+        });
+    });
+    
+    // Modals de publication
+    const publishModal = document.getElementById('publishModal');
+    const openPublishBtn = document.getElementById('openPublishModal');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const emptyCreateBtn = document.getElementById('emptyCreateBtn');
+    
+    if (openPublishBtn) {
+        openPublishBtn.addEventListener('click', () => {
+            publishModal.classList.remove('hidden');
+            publishModal.classList.add('flex');
+        });
+    }
+    
+    if (emptyCreateBtn) {
+        emptyCreateBtn.addEventListener('click', () => {
+            publishModal.classList.remove('hidden');
+            publishModal.classList.add('flex');
+        });
+    }
+    
+    if (closeModalBtn) {
+        closeModalBtn.addEventListener('click', () => {
+            publishModal.classList.add('hidden');
+            publishModal.classList.remove('flex');
+        });
+    }
+    
+    if (publishModal) {
+        publishModal.addEventListener('click', (e) => {
+            if (e.target === publishModal) {
+                publishModal.classList.add('hidden');
+                publishModal.classList.remove('flex');
+            }
+        });
+    }
+</script>
+{% endblock %}

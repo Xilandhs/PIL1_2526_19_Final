@@ -1,0 +1,465 @@
+{% extends 'base_empty.html' %}
+
+{% block title %}MentorLink - Plateforme de Mentorat Académique{% endblock %}
+
+{% block extra_head %}
+<style>
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+    
+    @keyframes float {
+        0%, 100% {
+            transform: translateY(0px);
+        }
+        50% {
+            transform: translateY(-20px);
+        }
+    }
+    
+    @keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+            opacity: 0.6;
+        }
+        50% {
+            transform: scale(1.1);
+            opacity: 0.3;
+        }
+    }
+    
+    .animate-fade-up {
+        animation: fadeInUp 0.6s ease-out forwards;
+    }
+    
+    .animate-fade {
+        animation: fadeIn 0.8s ease-out forwards;
+    }
+    
+    .animate-float {
+        animation: float 6s ease-in-out infinite;
+    }
+    
+    .hero-badge {
+        background: rgba(56, 105, 67, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(56, 105, 67, 0.2);
+    }
+    
+    .feature-card {
+        transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .stat-card {
+        transition: all 0.3s ease;
+    }
+    
+    .stat-card:hover {
+        transform: scale(1.05);
+    }
+    
+    .testimonial-card {
+        transition: all 0.3s ease;
+    }
+    
+    .testimonial-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px -12px rgba(0, 0, 0, 0.1);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Navbar personnalisée pour la landing page -->
+<nav class="fixed top-0 w-full z-50 bg-white/95 backdrop-blur-md border-b border-outline-variant/20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+            <!-- Logo -->
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+                    <span class="material-symbols-outlined text-white text-xl">school</span>
+                </div>
+                <span class="font-bold text-xl text-on-surface">MentorLink</span>
+            </div>
+            
+            <!-- Navigation Desktop -->
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#features" class="text-sm text-on-surface-variant hover:text-primary transition-colors">Fonctionnalités</a>
+                <a href="#how-it-works" class="text-sm text-on-surface-variant hover:text-primary transition-colors">Comment ça marche</a>
+                <a href="#testimonials" class="text-sm text-on-surface-variant hover:text-primary transition-colors">Témoignages</a>
+                <a href="#stats" class="text-sm text-on-surface-variant hover:text-primary transition-colors">Chiffres</a>
+            </div>
+            
+            <!-- Boutons d'authentification -->
+            <div class="flex items-center gap-3">
+                {% if user.is_authenticated %}
+                <a href="/dashboard/" class="px-4 py-2 text-sm font-medium text-primary hover:bg-primary/10 rounded-lg transition-all">
+                    Tableau de bord
+                </a>
+                <a href="/logout/" class="px-4 py-2 text-sm font-medium bg-primary text-white rounded-lg hover:bg-primary/90 transition-all">
+                    Déconnexion
+                </a>
+                {% else %}
+                <a href="/login/" class="px-4 py-2 text-sm font-medium text-primary hover:bg-primary/10 rounded-lg transition-all">
+                    Connexion
+                </a>
+                <a href="/register/" class="px-4 py-2 text-sm font-medium bg-primary text-white rounded-lg hover:bg-primary/90 transition-all">
+                    Inscription
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
+    <!-- Arrière-plan décoratif -->
+    <div class="absolute inset-0 -z-10">
+        <div class="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl animate-float"></div>
+        <div class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-secondary/5 rounded-full blur-3xl animate-float" style="animation-delay: -3s;"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-tertiary/5 rounded-full blur-3xl"></div>
+    </div>
+    
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+        <!-- Badge -->
+        <div class="inline-flex items-center gap-2 hero-badge rounded-full px-4 py-2 mb-8 animate-fade">
+            <span class="material-symbols-outlined text-primary text-sm">stars</span>
+            <span class="text-xs font-medium text-primary">Plateforme académique n°1</span>
+        </div>
+        
+        <!-- Titre principal -->
+        <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold text-on-surface mb-6 animate-fade-up" style="animation-delay: 0.1s">
+            Excellez dans vos études<br>
+            avec <span class="gradient-text">MentorLink</span>
+        </h1>
+        
+        <!-- Sous-titre -->
+        <p class="text-lg md:text-xl text-on-surface-variant max-w-2xl mx-auto mb-10 animate-fade-up" style="animation-delay: 0.2s">
+            La plateforme qui connecte les étudiants avec des mentors qualifiés pour une entraide académique efficace et bienveillante.
+        </p>
+        
+        <!-- Boutons CTA -->
+        <div class="flex flex-col sm:flex-row gap-4 justify-center mb-16 animate-fade-up" style="animation-delay: 0.3s">
+            {% if user.is_authenticated %}
+            <a href="/dashboard/" class="px-8 py-3 bg-primary text-white rounded-xl font-medium hover:bg-primary/90 transition-all inline-flex items-center gap-2">
+                Accéder à mon tableau de bord
+                <span class="material-symbols-outlined text-lg">arrow_forward</span>
+            </a>
+            <a href="/matching/" class="px-8 py-3 border border-outline-variant rounded-xl font-medium hover:bg-surface-container transition-all inline-flex items-center gap-2">
+                Trouver un mentor
+                <span class="material-symbols-outlined text-lg">search</span>
+            </a>
+            {% else %}
+            <a href="/register/" class="px-8 py-3 bg-primary text-white rounded-xl font-medium hover:bg-primary/90 transition-all inline-flex items-center gap-2">
+                Commencer gratuitement
+                <span class="material-symbols-outlined text-lg">arrow_forward</span>
+            </a>
+            <a href="/login/" class="px-8 py-3 border border-outline-variant rounded-xl font-medium hover:bg-surface-container transition-all inline-flex items-center gap-2">
+                Déjà inscrit ? Se connecter
+                <span class="material-symbols-outlined text-lg">login</span>
+            </a>
+            {% endif %}
+        </div>
+        
+        <!-- Stats rapides -->
+        <div class="flex flex-wrap justify-center gap-8 md:gap-12 animate-fade-up" style="animation-delay: 0.4s">
+            <div class="text-center">
+                <p class="text-3xl font-bold text-primary">500+</p>
+                <p class="text-sm text-on-surface-variant">Étudiants actifs</p>
+            </div>
+            <div class="text-center">
+                <p class="text-3xl font-bold text-primary">100+</p>
+                <p class="text-sm text-on-surface-variant">Mentors experts</p>
+            </div>
+            <div class="text-center">
+                <p class="text-3xl font-bold text-primary">98%</p>
+                <p class="text-sm text-on-surface-variant">Taux de satisfaction</p>
+            </div>
+            <div class="text-center">
+                <p class="text-3xl font-bold text-primary">1000+</p>
+                <p class="text-sm text-on-surface-variant">Sessions réalisées</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Section Fonctionnalités -->
+<section id="features" class="py-20 bg-surface/50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold text-on-surface mb-4">
+                Une plateforme complète
+            </h2>
+            <p class="text-lg text-on-surface-variant max-w-2xl mx-auto">
+                Tout ce dont vous avez besoin pour réussir vos études académiques
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Feature 1 -->
+            <div class="feature-card bg-white rounded-2xl p-6 border border-outline-variant/20 text-center">
+                <div class="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <span class="material-symbols-outlined text-primary text-3xl">handshake</span>
+                </div>
+                <h3 class="text-xl font-semibold text-on-surface mb-2">Matching intelligent</h3>
+                <p class="text-sm text-on-surface-variant">
+                    Notre algorithme vous propose les mentors les plus pertinents selon votre profil académique.
+                </p>
+            </div>
+            
+            <!-- Feature 2 -->
+            <div class="feature-card bg-white rounded-2xl p-6 border border-outline-variant/20 text-center">
+                <div class="w-16 h-16 bg-secondary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <span class="material-symbols-outlined text-secondary text-3xl">forum</span>
+                </div>
+                <h3 class="text-xl font-semibold text-on-surface mb-2">Messagerie intégrée</h3>
+                <p class="text-sm text-on-surface-variant">
+                    Communiquez facilement avec vos mentors grâce à notre messagerie en temps réel.
+                </p>
+            </div>
+            
+            <!-- Feature 3 -->
+            <div class="feature-card bg-white rounded-2xl p-6 border border-outline-variant/20 text-center">
+                <div class="w-16 h-16 bg-tertiary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <span class="material-symbols-outlined text-tertiary text-3xl">calendar_month</span>
+                </div>
+                <h3 class="text-xl font-semibold text-on-surface mb-2">Planification flexible</h3>
+                <p class="text-sm text-on-surface-variant">
+                    Programmez vos sessions selon vos disponibilités, en ligne ou en présentiel.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Section Comment ça marche -->
+<section id="how-it-works" class="py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold text-on-surface mb-4">
+                Comment ça marche ?
+            </h2>
+            <p class="text-lg text-on-surface-variant max-w-2xl mx-auto">
+                Trois étapes simples pour réussir
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Étape 1 -->
+            <div class="text-center">
+                <div class="w-20 h-20 bg-primary rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                    <span class="text-2xl font-bold text-white">1</span>
+                </div>
+                <h3 class="text-lg font-semibold text-on-surface mb-2">Créez votre compte</h3>
+                <p class="text-sm text-on-surface-variant">
+                    Inscrivez-vous gratuitement et complétez votre profil académique.
+                </p>
+            </div>
+            
+            <!-- Étape 2 -->
+            <div class="text-center">
+                <div class="w-20 h-20 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                    <span class="text-2xl font-bold text-white">2</span>
+                </div>
+                <h3 class="text-lg font-semibold text-on-surface mb-2">Trouvez votre mentor</h3>
+                <p class="text-sm text-on-surface-variant">
+                    Explorez notre algorithme de matching pour trouver le mentor idéal.
+                </p>
+            </div>
+            
+            <!-- Étape 3 -->
+            <div class="text-center">
+                <div class="w-20 h-20 bg-tertiary rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                    <span class="text-2xl font-bold text-white">3</span>
+                </div>
+                <h3 class="text-lg font-semibold text-on-surface mb-2">Apprenez et progressez</h3>
+                <p class="text-sm text-on-surface-variant">
+                    Planifiez vos sessions et développez vos compétences académiques.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Section Témoignages -->
+<section id="testimonials" class="py-20 bg-surface/50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold text-on-surface mb-4">
+                Ce qu'ils disent de nous
+            </h2>
+            <p class="text-lg text-on-surface-variant max-w-2xl mx-auto">
+                Des centaines d'étudiants nous font confiance
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Témoignage 1 -->
+            <div class="testimonial-card bg-white rounded-2xl p-6 border border-outline-variant/20">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
+                        <span class="text-lg font-semibold text-primary">JD</span>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-on-surface">Jean Dupont</h4>
+                        <div class="flex text-amber-500 text-sm">★★★★★</div>
+                    </div>
+                </div>
+                <p class="text-sm text-on-surface-variant italic">
+                    "Grâce à MentorLink, j'ai trouvé un mentor exceptionnel qui m'a aidé à réussir mes examens. La plateforme est intuitive et très efficace !"
+                </p>
+            </div>
+            
+            <!-- Témoignage 2 -->
+            <div class="testimonial-card bg-white rounded-2xl p-6 border border-outline-variant/20">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-12 h-12 rounded-full bg-secondary/20 flex items-center justify-center">
+                        <span class="text-lg font-semibold text-secondary">SM</span>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-on-surface">Sarah Martin</h4>
+                        <div class="flex text-amber-500 text-sm">★★★★★</div>
+                    </div>
+                </div>
+                <p class="text-sm text-on-surface-variant italic">
+                    "Je suis mentor sur MentorLink et c'est une expérience enrichissante. La plateforme facilite les échanges et le suivi des sessions."
+                </p>
+            </div>
+            
+            <!-- Témoignage 3 -->
+            <div class="testimonial-card bg-white rounded-2xl p-6 border border-outline-variant/20">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-12 h-12 rounded-full bg-tertiary/20 flex items-center justify-center">
+                        <span class="text-lg font-semibold text-tertiary">LK</span>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-on-surface">Lucas Kouamé</h4>
+                        <div class="flex text-amber-500 text-sm">★★★★★</div>
+                    </div>
+                </div>
+                <p class="text-sm text-on-surface-variant italic">
+                    "Le matching intelligent m'a permis de trouver rapidement un mentor spécialisé dans mon domaine. Je recommande vivement !"
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Section Statistiques -->
+<section id="stats" class="py-20 bg-gradient-to-r from-primary to-primary/90 text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            <div class="stat-card">
+                <div class="text-4xl font-bold mb-2">500+</div>
+                <div class="text-sm opacity-90">Étudiants</div>
+            </div>
+            <div class="stat-card">
+                <div class="text-4xl font-bold mb-2">100+</div>
+                <div class="text-sm opacity-90">Mentors</div>
+            </div>
+            <div class="stat-card">
+                <div class="text-4xl font-bold mb-2">98%</div>
+                <div class="text-sm opacity-90">Satisfaction</div>
+            </div>
+            <div class="stat-card">
+                <div class="text-4xl font-bold mb-2">1000+</div>
+                <div class="text-sm opacity-90">Sessions</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Section CTA Finale -->
+<section class="py-20">
+    <div class="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+        <h2 class="text-3xl md:text-4xl font-bold text-on-surface mb-4">
+            Prêt à exceller dans vos études ?
+        </h2>
+        <p class="text-lg text-on-surface-variant mb-8">
+            Rejoignez dès maintenant la communauté MentorLink et bénéficiez d'un accompagnement personnalisé.
+        </p>
+        {% if user.is_authenticated %}
+        <a href="/dashboard/" class="inline-flex items-center gap-2 px-8 py-3 bg-primary text-white rounded-xl font-medium hover:bg-primary/90 transition-all">
+            Accéder à mon tableau de bord
+            <span class="material-symbols-outlined text-lg">arrow_forward</span>
+        </a>
+        {% else %}
+        <a href="/register/" class="inline-flex items-center gap-2 px-8 py-3 bg-primary text-white rounded-xl font-medium hover:bg-primary/90 transition-all">
+            Créer mon compte gratuitement
+            <span class="material-symbols-outlined text-lg">arrow_forward</span>
+        </a>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-surface-container border-t border-outline-variant/20 py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+                <div class="flex items-center gap-2 mb-4">
+                    <div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+                        <span class="material-symbols-outlined text-white text-xl">school</span>
+                    </div>
+                    <span class="font-bold text-xl text-on-surface">MentorLink</span>
+                </div>
+                <p class="text-sm text-on-surface-variant">
+                    La plateforme de mentorat académique qui connecte les étudiants avec des experts.
+                </p>
+            </div>
+            
+            <div>
+                <h4 class="font-semibold text-on-surface mb-4">Navigation</h4>
+                <ul class="space-y-2 text-sm text-on-surface-variant">
+                    <li><a href="#features" class="hover:text-primary transition-colors">Fonctionnalités</a></li>
+                    <li><a href="#how-it-works" class="hover:text-primary transition-colors">Comment ça marche</a></li>
+                    <li><a href="#testimonials" class="hover:text-primary transition-colors">Témoignages</a></li>
+                </ul>
+            </div>
+            
+            <div>
+                <h4 class="font-semibold text-on-surface mb-4">Légal</h4>
+                <ul class="space-y-2 text-sm text-on-surface-variant">
+                    <li><a href="#" class="hover:text-primary transition-colors">Conditions d'utilisation</a></li>
+                    <li><a href="#" class="hover:text-primary transition-colors">Politique de confidentialité</a></li>
+                    <li><a href="#" class="hover:text-primary transition-colors">Mentions légales</a></li>
+                </ul>
+            </div>
+            
+            <div>
+                <h4 class="font-semibold text-on-surface mb-4">Contact</h4>
+                <ul class="space-y-2 text-sm text-on-surface-variant">
+                    <li class="flex items-center gap-2">📧 contact@mentorlink.com</li>
+                    <li class="flex items-center gap-2">📞 +229 01 XX XX XX</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="border-t border-outline-variant/20 mt-8 pt-8 text-center text-sm text-on-surface-variant">
+            <p>&copy; 2024 MentorLink. Tous droits réservés.</p>
+        </div>
+    </div>
+</footer>
+{% endblock %}

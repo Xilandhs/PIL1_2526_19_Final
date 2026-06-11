@@ -1,0 +1,391 @@
+{% extends 'base.html' %}
+
+{% block title %}Mes Annonces - MentorLink{% endblock %}
+
+{% block extra_head %}
+<style>
+    .ad-card {
+        transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+    }
+    
+    .ad-card:hover {
+        transform: translateY(-2px);
+    }
+    
+    @keyframes fadeOut {
+        from { opacity: 1; transform: translateX(0); }
+        to { opacity: 0; transform: translateX(-20px); }
+    }
+    
+    .ad-removing {
+        animation: fadeOut 0.3s ease-out forwards;
+    }
+    
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 500;
+    }
+    
+    .status-active {
+        background: #e3f9eb;
+        color: #386943;
+    }
+    
+    .status-archived {
+        background: #f1f5f9;
+        color: #64748b;
+    }
+    
+    @keyframes modalSlide {
+        from {
+            opacity: 0;
+            transform: scale(0.95) translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+    }
+    
+    .modal-animate {
+        animation: modalSlide 0.3s ease-out;
+    }
+    
+    .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mb-6">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-2xl md:text-3xl font-semibold text-on-surface tracking-tight">Mes annonces</h1>
+            <p class="text-sm text-on-surface-variant mt-1">Gérez vos offres de mentorat et demandes d'aide</p>
+        </div>
+        <button id="openCreateModal" class="px-5 py-2.5 bg-primary text-white rounded-xl text-sm font-medium flex items-center gap-2 hover:bg-primary/90 transition-all shadow-sm w-full md:w-auto justify-center">
+            <span class="material-symbols-outlined text-lg">add</span>
+            Nouvelle annonce
+        </button>
+    </div>
+</div>
+
+<!-- Cartes statistiques -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+    <div class="bg-white rounded-2xl p-4 border border-outline-variant/20">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-xs text-outline uppercase tracking-wide">Annonces actives</p>
+                <p class="text-2xl font-bold text-on-surface mt-1">{{ active_ads|length }}</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-primary">campaign</span>
+            </div>
+        </div>
+    </div>
+    <div class="bg-white rounded-2xl p-4 border border-outline-variant/20">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-xs text-outline uppercase tracking-wide">Total vues</p>
+                <p class="text-2xl font-bold text-on-surface mt-1">{{ total_views }}</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-tertiary/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-tertiary">visibility</span>
+            </div>
+        </div>
+    </div>
+    <div class="bg-white rounded-2xl p-4 border border-outline-variant/20">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-xs text-outline uppercase tracking-wide">Candidatures reçues</p>
+                <p class="text-2xl font-bold text-on-surface mt-1">{{ total_candidatures }}</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-secondary/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-secondary">how_to_reg</span>
+            </div>
+        </div>
+    </div>
+    <div class="bg-gradient-to-r from-primary to-primary/80 rounded-2xl p-4 text-white">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-xs text-white/70 uppercase tracking-wide">Taux de réponse</p>
+                <p class="text-2xl font-bold mt-1">{{ response_rate }}%</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+                <span class="material-symbols-outlined">trending_up</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filtres -->
+<div class="bg-white rounded-2xl p-4 border border-outline-variant/20 mb-6">
+    <div class="flex flex-wrap gap-4 items-end">
+        <div class="flex-1 min-w-[150px]">
+            <label class="block text-xs font-medium text-on-surface-variant mb-1">Statut</label>
+            <select id="filterStatus" class="w-full bg-white border border-outline-variant/30 rounded-xl px-3 py-2 text-sm">
+                <option value="all">Tous les statuts</option>
+                <option value="active">Actives</option>
+                <option value="archived">Archivées</option>
+            </select>
+        </div>
+        <div class="flex-1 min-w-[150px]">
+            <label class="block text-xs font-medium text-on-surface-variant mb-1">Type</label>
+            <select id="filterType" class="w-full bg-white border border-outline-variant/30 rounded-xl px-3 py-2 text-sm">
+                <option value="all">Tous les types</option>
+                <option value="offre">Offres de mentorat</option>
+                <option value="demande">Demandes d'aide</option>
+            </select>
+        </div>
+        <div>
+            <button id="applyFilters" class="bg-secondary text-white px-6 py-2 rounded-xl text-sm font-medium hover:bg-secondary/90 transition-all">Filtrer</button>
+        </div>
+    </div>
+</div>
+
+<!-- Liste des annonces -->
+<div id="adsList" class="space-y-3">
+    {% for ad in user_ads %}
+    <div class="bg-white rounded-2xl p-4 border border-outline-variant/20 ad-card" data-ad-id="{{ ad.id }}" data-status="{{ ad.statut }}" data-type="{{ ad.type }}">
+        <div class="flex flex-col md:flex-row md:items-center gap-4">
+            <div class="w-14 h-14 rounded-xl bg-secondary-container flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined text-secondary text-2xl">
+                    {% if ad.type == 'offre' %}school{% else %}help{% endif %}
+                </span>
+            </div>
+            <div class="flex-1 min-w-0">
+                <div class="flex flex-wrap items-center gap-2 mb-1">
+                    <h3 class="font-semibold text-on-surface">{{ ad.titre }}</h3>
+                    <span class="status-badge {% if ad.statut == 'active' %}status-active{% else %}status-archived{% endif %}">
+                        <span class="material-symbols-outlined text-sm">{% if ad.statut == 'active' %}check_circle{% else %}archive{% endif %}</span>
+                        {% if ad.statut == 'active' %}Active{% else %}Archivée{% endif %}
+                    </span>
+                    <span class="px-2 py-0.5 rounded-full text-xs font-medium {% if ad.type == 'offre' %}bg-primary/10 text-primary{% else %}bg-tertiary/10 text-tertiary{% endif %}">
+                        {% if ad.type == 'offre' %}Offre{% else %}Demande{% endif %}
+                    </span>
+                </div>
+                <p class="text-sm text-on-surface-variant line-clamp-2 mb-2">{{ ad.description }}</p>
+                <div class="flex flex-wrap items-center gap-3 text-xs text-outline">
+                    <span class="flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">{% if ad.format == 'en_ligne' %}videocam{% elif ad.format == 'presentiel' %}location_on{% else %}language{% endif %}</span>
+                        {% if ad.format == 'en_ligne' %}En ligne{% elif ad.format == 'presentiel' %}Présentiel{% else %}Mixte{% endif %}
+                    </span>
+                    <span class="flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">visibility</span>
+                        {{ ad.vues }} vues
+                    </span>
+                    <span class="flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">how_to_reg</span>
+                        {{ ad.candidatures.count }} candidature{{ ad.candidatures.count|pluralize }}
+                    </span>
+                    <span class="flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">event_available</span>
+                        {{ ad.places_restantes }} place{{ ad.places_restantes|pluralize }} disponible{{ ad.places_restantes|pluralize }}
+                    </span>
+                </div>
+            </div>
+            <div class="flex gap-2 md:ml-auto">
+                <button class="edit-ad-btn px-3 py-2 rounded-xl text-sm font-medium bg-secondary/10 text-secondary hover:bg-secondary hover:text-white transition-all flex items-center gap-1" data-id="{{ ad.id }}">
+                    <span class="material-symbols-outlined text-sm">edit</span>
+                    Modifier
+                </button>
+                <button class="archive-ad-btn px-3 py-2 rounded-xl text-sm font-medium border border-outline-variant text-on-surface-variant hover:bg-error/10 hover:text-error hover:border-error transition-all flex items-center gap-1" data-id="{{ ad.id }}" data-status="{{ ad.statut }}">
+                    <span class="material-symbols-outlined text-sm">{% if ad.statut == 'active' %}archive{% else %}unarchive{% endif %}</span>
+                    {% if ad.statut == 'active' %}Archiver{% else %}Restaurer{% endif %}
+                </button>
+                <button class="delete-ad-btn px-3 py-2 rounded-xl text-sm font-medium border border-error/30 text-error hover:bg-error hover:text-white transition-all flex items-center gap-1" data-id="{{ ad.id }}">
+                    <span class="material-symbols-outlined text-sm">delete</span>
+                    Supprimer
+                </button>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="text-center py-12">
+        <div class="w-20 h-20 bg-surface-container rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="material-symbols-outlined text-3xl text-outline">inbox</span>
+        </div>
+        <h3 class="text-lg font-semibold text-on-surface">Aucune annonce</h3>
+        <p class="text-sm text-on-surface-variant mt-1">Vous n'avez pas encore créé d'annonce</p>
+        <button id="emptyCreateBtn" class="mt-4 px-4 py-2 bg-primary text-white rounded-xl text-sm font-medium hover:bg-primary/90 transition-all">Créer ma première annonce</button>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- MODAL : Créer/Éditer -->
+<div id="adModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 backdrop-blur-sm overflow-y-auto py-8">
+    <div class="bg-white rounded-2xl w-full max-w-lg mx-4 overflow-hidden shadow-2xl modal-animate">
+        <div class="p-5 border-b border-outline-variant/20 flex justify-between items-center">
+            <h2 id="modalTitle" class="text-xl font-semibold text-on-surface">Nouvelle annonce</h2>
+            <button id="closeModalBtn" class="p-1 rounded-lg hover:bg-surface-container transition"><span class="material-symbols-outlined text-outline">close</span></button>
+        </div>
+        <form id="adForm" method="POST" action="{% url 'feed:create_annonce' %}" class="p-5 space-y-4">
+            {% csrf_token %}
+            <input type="hidden" id="editAdId" name="edit_id" value="">
+            
+            <div>
+                <label class="block text-sm font-medium text-on-surface mb-2">Type d'annonce</label>
+                <div class="flex gap-4">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="radio" name="type" value="offre" class="w-4 h-4 text-primary" checked>
+                        <span class="text-sm">Offre de mentorat</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="radio" name="type" value="demande" class="w-4 h-4 text-primary">
+                        <span class="text-sm">Demande d'aide</span>
+                    </label>
+                </div>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-on-surface mb-1">Matière *</label>
+                <select name="matiere" class="w-full bg-white border border-outline-variant/30 rounded-xl px-3 py-2 text-sm" required>
+                    <option value="">Sélectionner une matière</option>
+                    {% for matiere in matieres %}
+                    <option value="{{ matiere.id }}">{{ matiere.nom }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-on-surface mb-1">Titre *</label>
+                <input type="text" name="titre" id="adTitle" placeholder="Ex: Aide pour les TPs d'algorithmique" class="w-full bg-white border border-outline-variant/30 rounded-xl px-3 py-2 text-sm" required>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-on-surface mb-1">Description *</label>
+                <textarea name="description" id="adDescription" rows="4" placeholder="Décrivez votre annonce..." class="w-full bg-white border border-outline-variant/30 rounded-xl px-3 py-2 text-sm resize-none" required></textarea>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-on-surface mb-1">Format</label>
+                <select name="format" class="w-full bg-white border border-outline-variant/30 rounded-xl px-3 py-2 text-sm">
+                    <option value="en_ligne">En ligne (Zoom/Meet)</option>
+                    <option value="presentiel">Présentiel</option>
+                    <option value="les_deux">Les deux</option>
+                </select>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-on-surface mb-1">Places disponibles</label>
+                <input type="number" name="places_max" id="adSlots" min="1" max="10" value="3" class="w-full bg-white border border-outline-variant/30 rounded-xl px-3 py-2 text-sm">
+            </div>
+            
+            <button type="submit" class="w-full bg-primary text-white py-3 rounded-xl font-medium hover:bg-primary/90 transition-all">Publier l'annonce</button>
+        </form>
+    </div>
+</div>
+
+<!-- MODAL : Suppression -->
+<div id="deleteModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl w-full max-w-md mx-4 overflow-hidden shadow-2xl modal-animate">
+        <div class="p-5 border-b border-outline-variant/20"><h2 class="text-xl font-semibold text-on-surface">Supprimer l'annonce</h2></div>
+        <div class="p-5">
+            <div class="flex items-start gap-3 mb-4">
+                <span class="material-symbols-outlined text-error text-2xl">warning</span>
+                <div>
+                    <p class="text-sm text-on-surface font-medium">Êtes-vous sûr de vouloir supprimer cette annonce ?</p>
+                    <p class="text-xs text-on-surface-variant mt-1">Cette action est irréversible.</p>
+                </div>
+            </div>
+            <div class="flex gap-3">
+                <button id="cancelDeleteBtn" class="flex-1 px-4 py-2 border border-outline-variant rounded-xl text-sm font-medium hover:bg-surface-container transition-all">Annuler</button>
+                <button id="confirmDeleteBtn" class="flex-1 px-4 py-2 bg-error text-white rounded-xl text-sm font-medium hover:bg-error/90 transition-all">Supprimer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const csrfToken = '{{ csrf_token }}';
+    let currentDeleteId = null;
+    let currentEditId = null;
+    
+    // Modifier une annonce
+    document.querySelectorAll('.edit-ad-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const adId = btn.dataset.id;
+            const response = await fetch(`/feed/${adId}/get/`);
+            const ad = await response.json();
+            
+            document.getElementById('modalTitle').innerText = 'Modifier l\'annonce';
+            document.getElementById('editAdId').value = ad.id;
+            document.querySelector(`input[name="type"][value="${ad.type}"]`).checked = true;
+            document.querySelector('select[name="matiere"]').value = ad.matiere_id;
+            document.getElementById('adTitle').value = ad.titre;
+            document.getElementById('adDescription').value = ad.description;
+            document.querySelector('select[name="format"]').value = ad.format;
+            document.getElementById('adSlots').value = ad.places_max;
+            
+            document.getElementById('adModal').classList.remove('hidden');
+            document.getElementById('adModal').classList.add('flex');
+        });
+    });
+    
+    // Archiver/Restaurer
+    document.querySelectorAll('.archive-ad-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const adId = btn.dataset.id;
+            await fetch(`/feed/${adId}/archive/`, { method: 'POST', headers: { 'X-CSRFToken': csrfToken } });
+            window.location.reload();
+        });
+    });
+    
+    // Supprimer
+    document.querySelectorAll('.delete-ad-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            currentDeleteId = btn.dataset.id;
+            document.getElementById('deleteModal').classList.remove('hidden');
+            document.getElementById('deleteModal').classList.add('flex');
+        });
+    });
+    
+    document.getElementById('confirmDeleteBtn')?.addEventListener('click', async () => {
+        if (currentDeleteId) {
+            await fetch(`/feed/${currentDeleteId}/delete/`, { method: 'POST', headers: { 'X-CSRFToken': csrfToken } });
+            window.location.reload();
+        }
+    });
+    
+    document.getElementById('cancelDeleteBtn')?.addEventListener('click', () => {
+        document.getElementById('deleteModal').classList.add('hidden');
+        currentDeleteId = null;
+    });
+    
+    // Modals
+    document.getElementById('openCreateModal')?.addEventListener('click', () => {
+        document.getElementById('modalTitle').innerText = 'Nouvelle annonce';
+        document.getElementById('editAdId').value = '';
+        document.getElementById('adForm').reset();
+        document.querySelector('input[name="type"][value="offre"]').checked = true;
+        document.getElementById('adModal').classList.remove('hidden');
+        document.getElementById('adModal').classList.add('flex');
+    });
+    
+    document.getElementById('emptyCreateBtn')?.addEventListener('click', () => document.getElementById('openCreateModal').click());
+    document.getElementById('closeModalBtn')?.addEventListener('click', () => document.getElementById('adModal').classList.add('hidden'));
+    
+    document.getElementById('applyFilters')?.addEventListener('click', () => {
+        const status = document.getElementById('filterStatus').value;
+        const type = document.getElementById('filterType').value;
+        
+        document.querySelectorAll('.ad-card').forEach(card => {
+            const cardStatus = card.dataset.status;
+            const cardType = card.dataset.type;
+            let show = true;
+            if (status !== 'all' && cardStatus !== status) show = false;
+            if (type !== 'all' && cardType !== type) show = false;
+            card.style.display = show ? 'block' : 'none';
+        });
+    });
+</script>
+{% endblock %}

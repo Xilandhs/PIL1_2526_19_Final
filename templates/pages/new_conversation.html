@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+
+{% block title %}Nouvelle conversation - MentorLink{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    
+    <div class="mb-6">
+        <div class="flex items-center gap-4">
+            <a href="{% url 'messaging:conversations_list' %}" class="p-2 rounded-lg hover:bg-surface-container transition">
+                <span class="material-symbols-outlined">arrow_back</span>
+            </a>
+            <h1 class="text-2xl font-bold text-on-surface">Nouvelle conversation</h1>
+        </div>
+        <p class="text-sm text-on-surface-variant mt-1">Choisissez un utilisateur pour commencer à discuter</p>
+    </div>
+    
+    <!-- Barre de recherche -->
+    <div class="relative mb-6">
+        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+        <input type="text" id="searchUsers" placeholder="Rechercher par nom, prénom ou email..." 
+               class="w-full pl-10 pr-4 py-3 bg-white border border-outline-variant rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20">
+    </div>
+    
+    <!-- Liste des utilisateurs -->
+    <div class="bg-white rounded-2xl border border-outline-variant/20 overflow-hidden">
+        <div class="p-4 border-b border-outline-variant/20 bg-surface-container/30">
+            <span class="text-sm font-medium text-on-surface">Tous les membres</span>
+        </div>
+        
+        <div id="usersList" class="divide-y divide-outline-variant/10 max-h-[500px] overflow-y-auto">
+            {% for u in users %}
+            <a href="{% url 'messaging:conversation_with' u.id %}" 
+               class="flex items-center gap-4 p-4 hover:bg-surface-container transition-all group {% if u.id in existing_conversations %}opacity-60{% endif %}">
+                <div class="relative">
+                    {% if u.profil.photo_url %}
+                        <img src="{{ u.profil.photo_url }}" class="w-12 h-12 rounded-full object-cover">
+                    {% else %}
+                        <div class="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
+                            <span class="text-base font-semibold text-primary">{{ u.prenom|slice:":1" }}{{ u.nom|slice:":1" }}</span>
+                        </div>
+                    {% endif %}
+                    <span class="absolute bottom-0 right-0 w-3 h-3 {% if u.last_seen > now %}bg-emerald-500{% else %}bg-outline{% endif %} rounded-full ring-2 ring-white"></span>
+                </div>
+                <div class="flex-1">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-semibold text-on-surface">{{ u.prenom }} {{ u.nom }}</h3>
+                            <p class="text-xs text-outline">{{ u.email }}</p>
+                        </div>
+                        {% if u.id in existing_conversations %}
+                        <span class="text-xs text-outline bg-surface-container px-2 py-0.5 rounded-full">Déjà discuté</span>
+                        {% endif %}
+                    </div>
+                    {% if u.profil.filiere %}
+                    <p class="text-xs text-primary mt-1">{{ u.profil.filiere }} · {{ u.profil.niveau }}</p>
+                    {% endif %}
+                </div>
+                <div class="opacity-0 group-hover:opacity-100 transition">
+                    <span class="material-symbols-outlined text-primary">chevron_right</span>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        
+        <div id="noResults" class="hidden p-8 text-center">
+            <span class="material-symbols-outlined text-4xl text-outline mb-2">person_search</span>
+            <p class="text-outline">Aucun utilisateur trouvé</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    const searchInput = document.getElementById('searchUsers');
+    const usersList = document.getElementById('usersList');
+    const noResults = document.getElementById('noResults');
+    let searchTimeout;
+    
+    searchInput.addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            const search = this.value.trim();
+            if (search.length < 2) {
+                window.location.reload();
+                return;
+            }
+            
+            fetch(`/chat/api/users/?search=${encodeURIComponent(search)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.users.length === 0) {
+                        usersList.classList.add('hidden');
+                        noResults.classList.remove('hidden');
+                    } else {
+                        usersList.classList.remove('hidden');
+                        noResults.classList.add('hidden');
+                        
+                        usersList.innerHTML = data.users.map(user => `
+                            <a href="/chat/with/${user.id}/" class="flex items-center gap-4 p-4 hover:bg-surface-container transition-all group">
+                                <div class="relative">
+                                    ${user.avatar ? 
+                                        `<img src="${user.avatar}" class="w-12 h-12 rounded-full object-cover">` :
+                                        `<div class="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
+                                            <span class="text-base font-semibold text-primary">${user.initials}</span>
+                                        </div>`
+                                    }
+                                </div>
+                                <div class="flex-1">
+                                    <h3 class="font-semibold text-on-surface">${user.prenom} ${user.nom}</h3>
+                                    <p class="text-xs text-outline">${user.email}</p>
+                                    ${user.filiere ? `<p class="text-xs text-primary mt-1">${user.filiere}</p>` : ''}
+                                </div>
+                                <div class="opacity-0 group-hover:opacity-100 transition">
+                                    <span class="material-symbols-outlined text-primary">chevron_right</span>
+                                </div>
+                            </a>
+                        `).join('');
+                    }
+                });
+        }, 300);
+    });
+</script>
+{% endblock %}

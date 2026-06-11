@@ -1,0 +1,30 @@
+# # Django core
+# Django==5.0.6
+# djangorestframework==3.15.1
+# django-cors-headers==4.3.1
+# python-dotenv==1.0.1
+
+# # Supabase (pour appeler l'API Supabase depuis Django)
+# supabase==2.5.1
+# postgrest==0.16.0
+# realtime==1.0.0
+
+# # PostgreSQL (si tu utilises Supabase comme BDD principale)
+# psycopg2-binary==2.9.9
+
+# # Authentification JWT (pour communiquer avec Supabase Auth)
+# PyJWT==2.8.0
+# cryptography==42.0.5
+
+# # Utilitaires
+# requests==2.32.2
+# python-magic==0.4.27  # Pour valider les fichiers uploadés
+
+# # Pour les WebSockets (optionnel, si tu n'utilises pas Supabase Realtime)
+# # channels==4.1.0
+# # channels-redis==4.2.0
+
+# # Pour la production
+# # gunicorn==21.2.0
+# # whitenoise==6.6.0
+# # pillow==10.3.0  # Pour gérer les images

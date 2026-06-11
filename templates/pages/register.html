@@ -1,0 +1,519 @@
+{% extends 'base_empty.html' %}
+
+{% block title %}Inscription - MentorLink{% endblock %}
+
+{% block extra_head %}
+<style>
+    .glass-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(56, 105, 67, 0.1);
+    }
+    
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .fade-in-up {
+        animation: fadeInUp 0.5s ease-out;
+    }
+    
+    .step-active {
+        background-color: #386943;
+        color: white;
+    }
+    
+    .step-inactive {
+        background-color: #d2e8da;
+        color: #414941;
+    }
+    
+    .step-completed {
+        background-color: #75a87d;
+        color: white;
+    }
+    
+    .step-content {
+        display: none;
+    }
+    
+    .step-content.active-step {
+        display: block;
+    }
+    
+    .subject-card.selected {
+        background-color: #386943;
+        border-color: #386943;
+        color: white;
+    }
+    
+    .subject-card.selected .material-symbols-outlined {
+        color: white;
+    }
+    
+    .weak-card.selected {
+        background-color: #006a68;
+        border-color: #006a68;
+        color: white;
+    }
+    
+    .weak-card.selected .material-symbols-outlined {
+        color: white;
+    }
+    
+    /* Spinner animation */
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    
+    .animate-spin {
+        animation: spin 1s linear infinite;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden bg-gradient-to-br from-[#e9fff0] to-[#def3e5]">
+    
+    <!-- Éléments décoratifs -->
+    <div class="absolute inset-0 -z-10 overflow-hidden">
+        <div class="absolute top-[-20%] right-[-10%] w-[500px] h-[500px] bg-[#75a87d]/20 rounded-full blur-[100px] opacity-30"></div>
+        <div class="absolute bottom-[-20%] left-[-10%] w-[400px] h-[400px] bg-[#4caaa8]/20 rounded-full blur-[100px] opacity-20"></div>
+    </div>
+    
+    <div class="w-full max-w-3xl fade-in-up">
+        
+        <!-- En-tête -->
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-[#386943] rounded-2xl mb-4 shadow-lg">
+                <span class="material-symbols-outlined text-3xl text-white">school</span>
+            </div>
+            <h1 class="text-3xl font-bold text-[#0d1f17] mb-2">Créer un compte</h1>
+            <p class="text-base text-[#414941]">Rejoignez la communauté académique d'excellence</p>
+        </div>
+        
+        <!-- Indicateur d'étape -->
+        <div class="flex justify-center items-center gap-6 mb-8">
+            <div class="flex items-center gap-2">
+                <div id="step1Indicator" class="step-active w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold">1</div>
+                <span id="step1Label" class="text-sm text-[#0d1f17] font-medium">Infos générales</span>
+            </div>
+            <div class="w-12 h-px bg-[#c1c9be]"></div>
+            <div class="flex items-center gap-2">
+                <div id="step2Indicator" class="step-inactive w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold">2</div>
+                <span id="step2Label" class="text-sm text-[#414941]">Profil académique</span>
+            </div>
+        </div>
+        
+        <!-- Carte -->
+        <div class="glass-card rounded-2xl p-6 md:p-8 shadow-xl">
+            
+            <!-- Message d'erreur -->
+            <div id="errorMessage" class="hidden bg-[#ffdad6] text-[#ba1a1a] p-3 rounded-lg flex items-center gap-2 border border-[#ba1a1a]/20 mb-6">
+                <span class="material-symbols-outlined text-lg">error</span>
+                <span class="text-sm" id="errorText"></span>
+            </div>
+            
+            <!-- ÉTAPE 1 -->
+            <div id="step1" class="step-content active-step">
+                <form id="step1Form" class="space-y-5">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-sm font-medium text-[#36675a] mb-1">Prénom <span class="text-red-500">*</span></label>
+                            <input type="text" id="firstName" class="w-full px-3 py-2.5 bg-white border border-[#c1c9be] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#006a68]/20 focus:border-[#006a68] text-base" placeholder="Jean">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-[#36675a] mb-1">Nom <span class="text-red-500">*</span></label>
+                            <input type="text" id="lastName" class="w-full px-3 py-2.5 bg-white border border-[#c1c9be] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#006a68]/20 focus:border-[#006a68] text-base" placeholder="Dupont">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-[#36675a] mb-1">Numéro Matricule <span class="text-red-500">*</span></label>
+                        <div class="relative">
+                            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#717970] text-xl">badge</span>
+                            <input type="text" id="matricule" class="w-full pl-10 pr-3 py-2.5 bg-white border border-[#c1c9be] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#006a68]/20 focus:border-[#006a68] text-base" placeholder="EX: IFRI-2024-001">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-[#36675a] mb-1">Email Académique <span class="text-red-500">*</span></label>
+                        <div class="relative">
+                            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#717970] text-xl">mail</span>
+                            <input type="email" id="email" class="w-full pl-10 pr-3 py-2.5 bg-white border border-[#c1c9be] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#006a68]/20 focus:border-[#006a68] text-base" placeholder="jean.dupont@ifri.bj">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-[#36675a] mb-1">Numéro de Téléphone</label>
+                        <div class="relative">
+                            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#717970] text-xl">call</span>
+                            <input type="tel" id="phone" class="w-full pl-10 pr-3 py-2.5 bg-white border border-[#c1c9be] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#006a68]/20 focus:border-[#006a68] text-base" placeholder="+229 01 XX XX XX">
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-sm font-medium text-[#36675a] mb-1">Filière <span class="text-red-500">*</span></label>
+                            <select id="major" class="w-full px-3 py-2.5 bg-white border border-[#c1c9be] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#006a68]/20 text-base">
+                                <option value="" disabled selected>Sélectionner une filière</option>
+                                <option value="IA">IA</option>
+                                <option value="IM">IM</option>
+                                <option value="GL">Génie Logiciel</option>
+                                <option value="SEIoT">SEIoT</option>
+                                <option value="SI">SI</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-[#36675a] mb-1">Niveau <span class="text-red-500">*</span></label>
+                            <select id="level" class="w-full px-3 py-2.5 bg-white border border-[#c1c9be] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#006a68]/20 text-base">
+                                <option value="" disabled selected>Sélectionner un niveau</option>
+                                <option value="L1">Licence 1</option>
+                                <option value="L2">Licence 2</option>
+                                <option value="L3">Licence 3</option>
+                                <option value="M1">Master 1</option>
+                                <option value="M2">Master 2</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-[#36675a] mb-1">Mot de passe <span class="text-red-500">*</span></label>
+                        <div class="relative">
+                            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#717970] text-xl">lock</span>
+                            <input type="password" id="password" class="w-full pl-10 pr-10 py-2.5 bg-white border border-[#c1c9be] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#006a68]/20 focus:border-[#006a68] text-base" placeholder="••••••••">
+                            <button type="button" class="toggle-password absolute right-3 top-1/2 -translate-y-1/2 text-[#717970]">
+                                <span class="material-symbols-outlined text-xl">visibility</span>
+                            </button>
+                        </div>
+                        <p class="text-xs text-[#414941] mt-1 px-1">Minimum 8 caractères, incluant une majuscule et un chiffre</p>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-[#36675a] mb-1">Confirmer le mot de passe <span class="text-red-500">*</span></label>
+                        <div class="relative">
+                            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#717970] text-xl">verified</span>
+                            <input type="password" id="confirmPassword" class="w-full pl-10 pr-3 py-2.5 bg-white border border-[#c1c9be] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#006a68]/20 focus:border-[#006a68] text-base" placeholder="••••••••">
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" id="termsCheckbox" class="w-4 h-4 rounded border-[#c1c9be] text-[#386943]">
+                        <label class="text-sm text-[#414941]">J'accepte les <a href="#" class="text-[#386943] hover:underline">Conditions d'utilisation</a></label>
+                    </div>
+                    
+                    <button type="button" id="nextToStep2" class="w-full bg-[#386943] text-white py-3 rounded-xl font-semibold hover:bg-[#386943]/90 transition-all flex items-center justify-center gap-2 mt-4">
+                        Suivant
+                        <span class="material-symbols-outlined text-xl">arrow_forward</span>
+                    </button>
+                </form>
+            </div>
+            
+            <!-- ÉTAPE 2 -->
+            <div id="step2" class="step-content">
+                <form id="step2Form" class="space-y-6">
+                    <p class="text-base text-[#414941] text-center">Sélectionnez vos domaines d'expertise et ceux où vous souhaitez progresser</p>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-[#36675a] mb-3">Points Forts <span class="text-[#006a68]">(ce que vous maîtrisez)</span></label>
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-2" id="strengthsContainer">
+                            <div class="subject-card cursor-pointer p-3 rounded-xl border border-[#c1c9be] bg-white text-center transition-all" data-subject="maths">
+                                <span class="material-symbols-outlined text-2xl text-[#0d1f17]">functions</span>
+                                <p class="text-sm mt-1">Mathématiques</p>
+                            </div>
+                            <div class="subject-card cursor-pointer p-3 rounded-xl border border-[#c1c9be] bg-white text-center transition-all" data-subject="coding">
+                                <span class="material-symbols-outlined text-2xl text-[#0d1f17]">terminal</span>
+                                <p class="text-sm mt-1">Programmation</p>
+                            </div>
+                            <div class="subject-card cursor-pointer p-3 rounded-xl border border-[#c1c9be] bg-white text-center transition-all" data-subject="physics">
+                                <span class="material-symbols-outlined text-2xl text-[#0d1f17]">science</span>
+                                <p class="text-sm mt-1">Physique</p>
+                            </div>
+                            <div class="subject-card cursor-pointer p-3 rounded-xl border border-[#c1c9be] bg-white text-center transition-all" data-subject="algo">
+                                <span class="material-symbols-outlined text-2xl text-[#0d1f17]">data_usage</span>
+                                <p class="text-sm mt-1">Algorithmes</p>
+                            </div>
+                            <div class="subject-card cursor-pointer p-3 rounded-xl border border-[#c1c9be] bg-white text-center transition-all" data-subject="english">
+                                <span class="material-symbols-outlined text-2xl text-[#0d1f17]">translate</span>
+                                <p class="text-sm mt-1">Anglais</p>
+                            </div>
+                            <div class="subject-card cursor-pointer p-3 rounded-xl border border-[#c1c9be] bg-white text-center transition-all" data-subject="databases">
+                                <span class="material-symbols-outlined text-2xl text-[#0d1f17]">database</span>
+                                <p class="text-sm mt-1">Bases de données</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-[#36675a] mb-3">Points à améliorer <span class="text-[#006a68]">(où vous avez besoin d'aide)</span></label>
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-2" id="weaknessesContainer">
+                            <div class="weak-card subject-card cursor-pointer p-3 rounded-xl border border-[#c1c9be] bg-white text-center transition-all" data-subject="economics">
+                                <span class="material-symbols-outlined text-2xl text-[#0d1f17]">account_balance</span>
+                                <p class="text-sm mt-1">Économie</p>
+                            </div>
+                            <div class="weak-card subject-card cursor-pointer p-3 rounded-xl border border-[#c1c9be] bg-white text-center transition-all" data-subject="stats">
+                                <span class="material-symbols-outlined text-2xl text-[#0d1f17]">calculate</span>
+                                <p class="text-sm mt-1">Statistiques</p>
+                            </div>
+                            <div class="weak-card subject-card cursor-pointer p-3 rounded-xl border border-[#c1c9be] bg-white text-center transition-all" data-subject="sysdesign">
+                                <span class="material-symbols-outlined text-2xl text-[#0d1f17]">architecture</span>
+                                <p class="text-sm mt-1">Architecture logicielle</p>
+                            </div>
+                            <div class="weak-card subject-card cursor-pointer p-3 rounded-xl border border-[#c1c9be] bg-white text-center transition-all" data-subject="reseaux">
+                                <span class="material-symbols-outlined text-2xl text-[#0d1f17]">router</span>
+                                <p class="text-sm mt-1">Réseaux</p>
+                            </div>
+                            <div class="weak-card subject-card cursor-pointer p-3 rounded-xl border border-[#c1c9be] bg-white text-center transition-all" data-subject="cybersec">
+                                <span class="material-symbols-outlined text-2xl text-[#0d1f17]">security</span>
+                                <p class="text-sm mt-1">Cybersécurité</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-4 mt-6">
+                        <button type="button" id="backToStep1" class="flex-1 px-4 py-2.5 border border-[#c1c9be] rounded-xl font-medium hover:bg-[#f1f5f9] transition-all">
+                            Retour
+                        </button>
+                        <button type="button" id="submitSignup" class="flex-1 bg-[#386943] text-white py-2.5 rounded-xl font-semibold hover:bg-[#386943]/90 transition-all flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined text-xl">check_circle</span>
+                            Terminer
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Lien connexion -->
+        <!-- Lien connexion -->
+<p class="text-center mt-6 text-sm text-[#414941]">
+    Vous avez déjà un compte ? 
+    <a href="{% url 'login' %}" class="text-[#386943] font-semibold hover:text-[#006a68] transition-colors"> Se connecter </a>
+</p>
+    </div>
+</div>
+
+<script>
+    (function() {
+        let selectedStrengths = [];
+        let selectedWeaknesses = [];
+        
+        // Toggle password visibility
+        document.querySelectorAll('.toggle-password').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const input = this.parentElement.querySelector('input');
+                const icon = this.querySelector('.material-symbols-outlined');
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.textContent = 'visibility_off';
+                } else {
+                    input.type = 'password';
+                    icon.textContent = 'visibility';
+                }
+            });
+        });
+        
+        // Step 1 -> Step 2
+        document.getElementById('nextToStep2')?.addEventListener('click', function() {
+            const firstName = document.getElementById('firstName')?.value.trim();
+            const lastName = document.getElementById('lastName')?.value.trim();
+            const matricule = document.getElementById('matricule')?.value.trim();
+            const email = document.getElementById('email')?.value.trim();
+            const major = document.getElementById('major')?.value;
+            const level = document.getElementById('level')?.value;
+            const password = document.getElementById('password')?.value;
+            const confirmPassword = document.getElementById('confirmPassword')?.value;
+            const termsAccepted = document.getElementById('termsCheckbox')?.checked;
+            
+            const errorBox = document.getElementById('errorMessage');
+            const errorText = document.getElementById('errorText');
+            
+            // Validation des champs
+            if (!firstName || !lastName || !matricule || !email || !major || !level || !password) {
+                errorText.textContent = 'Veuillez remplir tous les champs obligatoires';
+                errorBox.classList.remove('hidden');
+                setTimeout(() => errorBox.classList.add('hidden'), 4000);
+                return;
+            }
+            
+            if (!email.includes('@')) {
+                errorText.textContent = 'Email invalide';
+                errorBox.classList.remove('hidden');
+                setTimeout(() => errorBox.classList.add('hidden'), 4000);
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                errorText.textContent = 'Les mots de passe ne correspondent pas';
+                errorBox.classList.remove('hidden');
+                setTimeout(() => errorBox.classList.add('hidden'), 4000);
+                return;
+            }
+            
+            if (password.length < 8) {
+                errorText.textContent = 'Le mot de passe doit contenir au moins 8 caractères';
+                errorBox.classList.remove('hidden');
+                setTimeout(() => errorBox.classList.add('hidden'), 4000);
+                return;
+            }
+            
+            if (!termsAccepted) {
+                errorText.textContent = 'Veuillez accepter les conditions';
+                errorBox.classList.remove('hidden');
+                setTimeout(() => errorBox.classList.add('hidden'), 4000);
+                return;
+            }
+            
+            // Stocker les données dans localStorage
+            localStorage.setItem('signup_data', JSON.stringify({
+                firstName, 
+                lastName, 
+                matricule, 
+                email, 
+                major, 
+                level, 
+                password
+            }));
+            
+            // Changer d'étape
+            document.getElementById('step1').classList.remove('active-step');
+            document.getElementById('step2').classList.add('active-step');
+            
+            document.getElementById('step1Indicator').className = 'step-completed w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold';
+            document.getElementById('step2Indicator').className = 'step-active w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold';
+            document.getElementById('step1Label').className = 'text-sm text-[#414941]';
+            document.getElementById('step2Label').className = 'text-sm text-[#0d1f17] font-medium';
+        });
+        
+        // Step 2 -> Step 1 (Retour)
+        document.getElementById('backToStep1')?.addEventListener('click', function() {
+            document.getElementById('step2').classList.remove('active-step');
+            document.getElementById('step1').classList.add('active-step');
+            
+            document.getElementById('step2Indicator').className = 'step-inactive w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold';
+            document.getElementById('step1Indicator').className = 'step-active w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold';
+            document.getElementById('step2Label').className = 'text-sm text-[#414941]';
+            document.getElementById('step1Label').className = 'text-sm text-[#0d1f17] font-medium';
+        });
+        
+        // Sélection des points forts
+        document.querySelectorAll('#strengthsContainer .subject-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const subject = this.dataset.subject;
+                this.classList.toggle('selected');
+                if (this.classList.contains('selected')) {
+                    if (!selectedStrengths.includes(subject)) selectedStrengths.push(subject);
+                } else {
+                    selectedStrengths = selectedStrengths.filter(s => s !== subject);
+                }
+            });
+        });
+        
+        // Sélection des points faibles
+        document.querySelectorAll('#weaknessesContainer .weak-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const subject = this.dataset.subject;
+                this.classList.toggle('selected');
+                if (this.classList.contains('selected')) {
+                    if (!selectedWeaknesses.includes(subject)) selectedWeaknesses.push(subject);
+                } else {
+                    selectedWeaknesses = selectedWeaknesses.filter(s => s !== subject);
+                }
+            });
+        });
+        
+        // SUBMISSION - Envoi des données à l'API
+        document.getElementById('submitSignup')?.addEventListener('click', async function(e) {
+            e.preventDefault();
+            
+            const errorBox = document.getElementById('errorMessage');
+            const errorText = document.getElementById('errorText');
+            
+            // Vérifier qu'au moins un point fort est sélectionné
+            if (selectedStrengths.length === 0) {
+                errorText.textContent = 'Sélectionnez au moins un point fort';
+                errorBox.classList.remove('hidden');
+                setTimeout(() => errorBox.classList.add('hidden'), 4000);
+                return;
+            }
+            
+            // Vérifier qu'au moins un point faible est sélectionné
+            if (selectedWeaknesses.length === 0) {
+                errorText.textContent = 'Sélectionnez au moins un domaine à améliorer';
+                errorBox.classList.remove('hidden');
+                setTimeout(() => errorBox.classList.add('hidden'), 4000);
+                return;
+            }
+            
+            // Récupérer les données de l'étape 1
+            const signupData = JSON.parse(localStorage.getItem('signup_data') || '{}');
+            
+            // Préparer les données complètes
+            const data = {
+                ...signupData,
+                strengths: selectedStrengths,
+                weaknesses: selectedWeaknesses
+            };
+            
+            // Désactiver le bouton et afficher le chargement
+            const submitBtn = document.getElementById('submitSignup');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<div class="inline-block w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div> Création en cours...';
+            submitBtn.disabled = true;
+            
+            try {
+                const response = await fetch('/api/register/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Redirection vers le tableau de bord
+                    window.location.href = result.redirect_url;
+                } else {
+                    // Afficher l'erreur
+                    errorText.textContent = result.error || 'Une erreur est survenue lors de l\'inscription';
+                    errorBox.classList.remove('hidden');
+                    setTimeout(() => errorBox.classList.add('hidden'), 5000);
+                    
+                    // Réactiver le bouton
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                errorText.textContent = 'Erreur de connexion au serveur. Veuillez réessayer.';
+                errorBox.classList.remove('hidden');
+                setTimeout(() => errorBox.classList.add('hidden'), 5000);
+                
+                // Réactiver le bouton
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+        
+        // Fonction pour récupérer le cookie CSRF
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    })();
+</script>
+{% endblock %}

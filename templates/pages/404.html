@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+{% block title %}Page non trouvée - MentorLink{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Animation pour l'illustration */
+    @keyframes fadeInScale {
+        from {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+    
+    .animate-fade-scale {
+        animation: fadeInScale 0.5s ease-out forwards;
+    }
+    
+    /* Effet flottant pour les éléments décoratifs */
+    @keyframes float {
+        0%, 100% {
+            transform: translateY(0px) rotate(0deg);
+        }
+        50% {
+            transform: translateY(-10px) rotate(5deg);
+        }
+    }
+    
+    .float-item {
+        animation: float 4s ease-in-out infinite;
+    }
+    
+    .float-item-delayed {
+        animation: float 4s ease-in-out infinite 1s;
+    }
+    
+    /* Card hover */
+    .help-card {
+        transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+    }
+    
+    .help-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px -12px rgba(0, 0, 0, 0.1);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="min-h-[calc(100vh-200px)] flex flex-col items-center justify-center relative">
+    
+    <!-- Éléments d'arrière-plan décoratifs -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute -top-[10%] -left-[5%] w-[400px] h-[400px] bg-primary-container opacity-10 rounded-full blur-[120px]"></div>
+        <div class="absolute -bottom-[10%] -right-[5%] w-[500px] h-[500px] bg-tertiary-container opacity-10 rounded-full blur-[150px]"></div>
+    </div>
+    
+    <div class="max-w-xl w-full text-center relative z-10">
+        
+        <!-- Illustration avec effet flottant -->
+        <div class="mb-8 relative animate-fade-scale">
+            <div class="w-64 h-64 md:w-80 md:h-80 bg-white/70 backdrop-blur-sm border border-outline-variant/30 rounded-3xl shadow-xl flex items-center justify-center p-6 mx-auto">
+                <span class="material-symbols-outlined text-8xl text-primary opacity-80">error</span>
+            </div>
+            
+            <!-- Éléments flottants décoratifs -->
+            <div class="absolute -top-4 -right-4 w-12 h-12 bg-secondary-container rounded-xl shadow-lg flex items-center justify-center float-item">
+                <span class="material-symbols-outlined text-secondary">school</span>
+            </div>
+            <div class="absolute -bottom-2 -left-6 w-14 h-14 bg-white rounded-full shadow-md flex items-center justify-center float-item-delayed">
+                <span class="material-symbols-outlined text-tertiary">search</span>
+            </div>
+        </div>
+        
+        <!-- Message d'erreur -->
+        <h1 class="text-7xl md:text-8xl font-bold text-primary mb-3 tracking-tight">404</h1>
+        <h2 class="text-2xl md:text-3xl font-semibold text-on-surface mb-4">
+            Oups ! Page non trouvée
+        </h2>
+        <p class="text-base md:text-lg text-on-surface-variant max-w-md mx-auto mb-8 leading-relaxed">
+            La page que vous recherchez n'existe pas ou a été déplacée. 
+            Ne vous inquiétez pas, revenez à l'accueil pour continuer votre parcours académique.
+        </p>
+        
+        <!-- Boutons d'action -->
+        <div class="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+            <a href="/dashboard/" class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-primary text-white rounded-xl font-medium shadow-md hover:bg-primary/90 transition-all hover:-translate-y-0.5 active:scale-95">
+                <span class="material-symbols-outlined text-lg">dashboard</span>
+                Tableau de bord
+            </a>
+            <button onclick="window.history.back()" class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-surface-container border border-outline-variant rounded-xl font-medium hover:bg-surface-container-high transition-all hover:-translate-y-0.5 active:scale-95">
+                <span class="material-symbols-outlined text-lg">arrow_back</span>
+                Page précédente
+            </button>
+        </div>
+        
+        <!-- Liens utiles -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
+            <a href="/feed/" class="help-card p-4 bg-white border border-outline-variant/20 rounded-xl hover:shadow-md transition-all">
+                <span class="material-symbols-outlined text-primary mb-2">explore</span>
+                <h3 class="font-medium text-on-surface mb-1">Explorer le flux</h3>
+                <p class="text-xs text-on-surface-variant">Découvrez les annonces d'entraide</p>
+            </a>
+            <a href="/messages/" class="help-card p-4 bg-white border border-outline-variant/20 rounded-xl hover:shadow-md transition-all">
+                <span class="material-symbols-outlined text-secondary mb-2">forum</span>
+                <h3 class="font-medium text-on-surface mb-1">Messagerie</h3>
+                <p class="text-xs text-on-surface-variant">Reprenez vos discussions</p>
+            </a>
+            <a href="/profile/" class="help-card p-4 bg-white border border-outline-variant/20 rounded-xl hover:shadow-md transition-all">
+                <span class="material-symbols-outlined text-tertiary mb-2">person</span>
+                <h3 class="font-medium text-on-surface mb-1">Mon profil</h3>
+                <p class="text-xs text-on-surface-variant">Consultez votre profil</p>
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Effet de parallaxe léger sur l'illustration
+    document.addEventListener('mousemove', function(e) {
+        const container = document.querySelector('.animate-fade-scale');
+        if (container) {
+            const moveX = (e.clientX - window.innerWidth / 2) / 100;
+            const moveY = (e.clientY - window.innerHeight / 2) / 100;
+            container.style.transform = `translate(${moveX}px, ${moveY}px)`;
+        }
+    });
+</script>
+{% endblock %}

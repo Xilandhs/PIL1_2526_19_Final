@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rapport de Projet — Groupe 19</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <style>
+         :root {
+            --ink: #1a1a2e;
+            --ink-light: #4a4a6a;
+            --paper: #f8f7f4;
+            --accent: #2d6a4f;
+            --accent-2: #52b788;
+            --rule: #d8d5cf;
+            --chip-bg: #e9f5ee;
+            --chip-text: #1b4332;
+            --serif: 'DM Serif Display', Georgia, serif;
+            --sans: 'Inter', system-ui, sans-serif;
+            --mono: 'JetBrains Mono', monospace;
+        }
+        
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: var(--sans);
+            background: var(--paper);
+            color: var(--ink);
+            line-height: 1.7;
+            padding: 0 1rem;
+        }
+        /* ─── HEADER ─── */
+        
+        header {
+            max-width: 760px;
+            margin: 3.5rem auto 2.5rem;
+            border-left: 3px solid var(--accent);
+            padding-left: 1.5rem;
+        }
+        
+        .eyebrow {
+            font-family: var(--mono);
+            font-size: 0.72rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+        
+        header h1 {
+            font-family: var(--serif);
+            font-size: clamp(2rem, 5vw, 3rem);
+            line-height: 1.15;
+            color: var(--ink);
+        }
+        
+        header p.subtitle {
+            margin-top: 0.6rem;
+            font-size: 0.95rem;
+            color: var(--ink-light);
+        }
+        /* ─── META CHIPS ─── */
+        
+        .meta-chips {
+            max-width: 760px;
+            margin: 0 auto 3rem;
+            padding-left: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .chip {
+            background: var(--chip-bg);
+            color: var(--chip-text);
+            font-size: 0.78rem;
+            font-weight: 500;
+            padding: 0.3rem 0.75rem;
+            border-radius: 99px;
+        }
+        /* ─── SECTION ─── */
+        
+        section {
+            max-width: 760px;
+            margin: 0 auto 3rem;
+        }
+        
+        section h2 {
+            font-family: var(--serif);
+            font-size: 1.45rem;
+            color: var(--ink);
+            margin-bottom: 1rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 1px solid var(--rule);
+        }
+        
+        section p {
+            color: var(--ink-light);
+            font-size: 0.95rem;
+            margin-bottom: 0.8rem;
+        }
+        /* ─── TIMELINE ─── */
+        
+        .timeline {
+            position: relative;
+            padding-left: 1.8rem;
+            border-left: 2px solid var(--accent-2);
+            display: flex;
+            flex-direction: column;
+            gap: 1.6rem;
+        }
+        
+        .tl-event {
+            position: relative;
+        }
+        
+        .tl-event::before {
+            content: '';
+            position: absolute;
+            left: calc(-1.8rem - 5px);
+            top: 6px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--accent);
+            border: 2px solid var(--paper);
+            box-shadow: 0 0 0 2px var(--accent);
+        }
+        
+        .tl-date {
+            font-family: var(--mono);
+            font-size: 0.75rem;
+            color: var(--accent);
+            font-weight: 500;
+            margin-bottom: 0.2rem;
+        }
+        
+        .tl-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--ink);
+            margin-bottom: 0.2rem;
+        }
+        
+        .tl-body {
+            font-size: 0.88rem;
+            color: var(--ink-light);
+        }
+        /* ─── TASK TABLE ─── */
+        
+        .task-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        
+        .task-table thead tr {
+            background: var(--accent);
+            color: #fff;
+        }
+        
+        .task-table th {
+            padding: 0.65rem 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.82rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+        
+        .task-table tbody tr {
+            border-bottom: 1px solid var(--rule);
+            transition: background 0.15s;
+        }
+        
+        .task-table tbody tr:hover {
+            background: var(--chip-bg);
+        }
+        
+        .task-table td {
+            padding: 0.65rem 1rem;
+            color: var(--ink-light);
+        }
+        
+        .task-table td:first-child {
+            font-weight: 600;
+            color: var(--ink);
+        }
+        
+        .role-badge {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-family: var(--mono);
+            padding: 0.15rem 0.55rem;
+            border-radius: 4px;
+            background: var(--chip-bg);
+            color: var(--chip-text);
+        }
+        /* ─── NOTE BOX ─── */
+        
+        .note {
+            background: var(--chip-bg);
+            border-left: 3px solid var(--accent);
+            padding: 0.9rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            font-size: 0.88rem;
+            color: var(--chip-text);
+        }
+        /* ─── FOOTER ─── */
+        
+        footer {
+            max-width: 760px;
+            margin: 4rem auto;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--rule);
+            font-size: 0.78rem;
+            color: var(--ink-light);
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <p class="eyebrow">IFRI · PIL1 2025-2026 · Groupe 19</p>
+        <h1>Rapport de Projet<br/>IFRI_MentorLink</h1>
+        <p class="subtitle">Compte rendu des séances de travail — du 3 au 10 juin 2026</p>
+    </header>
+
+    <div class="meta-chips">
+        <span class="chip">📅 Durée : 3 – 10 juin 2026</span>
+        <span class="chip">🛠 Stack : Django · PostgreSQL · JavaScript</span>
+        <span class="chip">🔗 Gestionnaire : GitHub</span>
+        <span class="chip">👥 7 membres</span>
+    </div>
+
+    <!-- SÉANCE 1 -->
+    <section>
+        <h2>Première séance — Mercredi 3 juin 2026</h2>
+        <p>
+            La première séance s'est tenue le mercredi 3 juin 2026 à 13h30, en vidéoconférence. Elle a débuté par une présentation mutuelle des membres du groupe, suivie d'une relecture du cahier des charges. La répartition des tâches a ensuite été effectuée en tenant
+            compte des compétences et aptitudes de chacun.
+        </p>
+
+        <table class="task-table">
+            <thead>
+                <tr>
+                    <th>Membre</th>
+                    <th>Module assigné</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Lucien</td>
+                    <td><span class="role-badge">Frontend</span></td>
+                </tr>
+                <tr>
+                    <td>Sandrine</td>
+                    <td><span class="role-badge">Frontend</span></td>
+                </tr>
+                <tr>
+                    <td>Ange</td>
+                    <td><span class="role-badge">Backend</span></td>
+                </tr>
+                <tr>
+                    <td>Cyrille</td>
+                    <td><span class="role-badge">Données</span></td>
+                </tr>
+                <tr>
+                    <td>Vanessa</td>
+                    <td><span class="role-badge">Données</span></td>
+                </tr>
+                <tr>
+                    <td>Kadmiel</td>
+                    <td><span class="role-badge">Serveur</span></td>
+                </tr>
+                <tr>
+                    <td>Miracle</td>
+                    <td><span class="role-badge">Polyvalent — support à tous les modules</span></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <br />
+        <p>
+            La séance du matin (9h – 13h) a également permis à l'équipe de se familiariser avec l'environnement de travail GitHub. Un nouveau dépôt a été créé en remplacement du précédent, qui avait engendré quelques problèmes d'accès pour le professeur durant plusieurs
+            jours.
+        </p>
+
+        <div class="note">
+            📌 La prochaine séance avait été planifiée pour le jeudi 4 juin 2026 à 9h, à la bibliothèque de la FSA.
+        </div>
+    </section>
+
+    <!-- DÉROULEMENT DU PROJET -->
+    <section>
+        <h2>Déroulement général du projet</h2>
+        <div class="timeline">
+
+            <div class="tl-event">
+                <div class="tl-date">Mercredi 3 juin 2026</div>
+                <div class="tl-title">Lancement &amp; organisation</div>
+                <div class="tl-body">Répartition des tâches, prise en main de GitHub, création du nouveau dépôt. Travail en binôme ou individuellement selon les modules.</div>
+            </div>
+
+            <div class="tl-event">
+                <div class="tl-date">Samedi 7 juin 2026</div>
+                <div class="tl-title">Début des commits effectifs</div>
+                <div class="tl-body">Les contributions sur le dépôt GitHub ont démarré ce jour et se sont poursuivies de manière continue jusqu'à la date de clôture du projet.</div>
+            </div>
+
+            <div class="tl-event">
+                <div class="tl-date">Mardi 9 juin 2026</div>
+                <div class="tl-title">Séance de travail en appel + fusion Backend / Frontend</div>
+                <div class="tl-body">Deuxième séance en vidéoconférence. La journée a aussi été consacrée à une session en présentiel dédiée à l'intégration complète du backend et du frontend.</div>
+            </div>
+
+            <div class="tl-event">
+                <div class="tl-date">Mercredi 10 juin 2026</div>
+                <div class="tl-title">Clôture du projet</div>
+                <div class="tl-body">Date officielle de fin du projet. L'ensemble des livrables ont été soumis et le dépôt GitHub finalisé.</div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- BILAN -->
+    <section>
+        <h2>Bilan de la collaboration</h2>
+        <p>
+            Tous les membres du groupe ont contribué activement à la réalisation du projet. Les différents commits sur le dépôt GitHub en attestent de manière transparente.
+        </p>
+        <p>
+            L'atmosphère de travail au sein du groupe a été particulièrement conviviale tout au long du projet, ce qui a favorisé une coordination fluide entre les modules.
+        </p>
+        <div class="note">
+            ✅ Deux séances en vidéoconférence ont été tenues (3 juin et 9 juin), complétées par une session en présentiel le 9 juin pour la fusion backend / frontend.
+        </div>
+    </section>
+
+    <footer>
+        <span>Groupe 19 — IFRI, Université d'Abomey-Calavi</span>
+        <span>PIL1 · Année académique 2025-2026</span>
+    </footer>
+
+</body>
+
+</html>

@@ -1,0 +1,1830 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guide d'utilisation — IFRI_MentorLink</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+    <style>
+        /* ──────────────────────────────────────────────
+   TOKENS
+   ────────────────────────────────────────────── */
+        
+        :root {
+            --ink: #1c1917;
+            --ink2: #44403c;
+            --ink3: #78716c;
+            --page: #fafaf9;
+            --cream: #f5f0e8;
+            --surface: #ffffff;
+            --border: #e7e5e4;
+            --border2: #d6d3d1;
+            --teal: #0d7d6b;
+            --teal-lt: #d1fae5;
+            --teal-md: #6ee7b7;
+            --amber: #b45309;
+            --amber-lt: #fef3c7;
+            --red: #b91c1c;
+            --red-lt: #fee2e2;
+            --blue: #1d4ed8;
+            --blue-lt: #dbeafe;
+            --r: 10px;
+            --r-lg: 16px;
+            --shadow: 0 1px 3px rgba(28, 25, 23, .08), 0 4px 12px rgba(28, 25, 23, .05);
+            --shadow-md: 0 4px 16px rgba(28, 25, 23, .12);
+            --ff: 'Bricolage Grotesque', sans-serif;
+            --fs: 'Instrument Serif', serif;
+        }
+        /* ──────────────────────────────────────────────
+   RESET & BASE
+   ────────────────────────────────────────────── */
+        
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            background: var(--page);
+            color: var(--ink);
+            font-family: var(--ff);
+            font-size: 16px;
+            line-height: 1.65;
+        }
+        /* ──────────────────────────────────────────────
+   LAYOUT
+   ────────────────────────────────────────────── */
+        
+        .page-wrap {
+            display: flex;
+            min-height: 100vh;
+        }
+        /* ─── SIDEBAR NAV ─── */
+        
+        .nav {
+            width: 270px;
+            flex-shrink: 0;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .nav-logo {
+            padding: 24px 20px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .nav-logo-mark {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 4px;
+        }
+        
+        .nav-logo-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--teal);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 18px;
+        }
+        
+        .nav-logo-name {
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--ink);
+        }
+        
+        .nav-logo-sub {
+            font-size: 11px;
+            color: var(--ink3);
+            font-weight: 400;
+        }
+        
+        .nav-section {
+            padding: 20px 20px 8px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .12em;
+            color: var(--ink3);
+        }
+        
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 20px;
+            font-size: 13.5px;
+            color: var(--ink2);
+            text-decoration: none;
+            border-left: 2px solid transparent;
+            transition: all .15s;
+            cursor: pointer;
+        }
+        
+        .nav-link:hover {
+            background: var(--cream);
+            color: var(--ink);
+        }
+        
+        .nav-link.active {
+            background: var(--teal-lt);
+            color: var(--teal);
+            border-left-color: var(--teal);
+            font-weight: 600;
+        }
+        
+        .nav-icon {
+            font-size: 15px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .nav-progress {
+            margin-top: auto;
+            padding: 16px 20px;
+            border-top: 1px solid var(--border);
+        }
+        
+        .nav-prog-label {
+            font-size: 11px;
+            color: var(--ink3);
+            margin-bottom: 6px;
+        }
+        
+        .nav-prog-bar {
+            height: 4px;
+            background: var(--border);
+            border-radius: 99px;
+            overflow: hidden;
+        }
+        
+        .nav-prog-fill {
+            height: 100%;
+            background: var(--teal);
+            border-radius: 99px;
+            width: 0%;
+            transition: width .4s ease;
+        }
+        /* ─── MAIN CONTENT ─── */
+        
+        .main {
+            flex: 1;
+            overflow-x: hidden;
+        }
+        /* ─── HERO ─── */
+        
+        .hero {
+            background: var(--ink);
+            color: #fff;
+            padding: 56px 56px 64px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -60px;
+            right: -60px;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(13, 125, 107, .4) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -40px;
+            left: 20%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(13, 125, 107, .2) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        
+        .hero-eyebrow {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+            color: var(--teal-md);
+            margin-bottom: 16px;
+        }
+        
+        .hero-title {
+            font-family: var(--fs);
+            font-size: clamp(32px, 4.5vw, 52px);
+            font-weight: 400;
+            line-height: 1.15;
+            margin-bottom: 16px;
+            position: relative;
+        }
+        
+        .hero-title em {
+            color: var(--teal-md);
+            font-style: italic;
+        }
+        
+        .hero-desc {
+            color: #a8a29e;
+            font-size: 15px;
+            max-width: 540px;
+            line-height: 1.7;
+            margin-bottom: 32px;
+        }
+        
+        .hero-chips {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .chip {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 99px;
+            font-size: 12px;
+            font-weight: 500;
+            border: 1px solid rgba(255, 255, 255, .15);
+            color: #e7e5e4;
+            background: rgba(255, 255, 255, .06);
+        }
+        /* ─── SECTIONS ─── */
+        
+        .section {
+            padding: 56px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .section:last-child {
+            border-bottom: none;
+        }
+        
+        .section-eyebrow {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            color: var(--teal);
+            margin-bottom: 10px;
+        }
+        
+        .section-title {
+            font-family: var(--fs);
+            font-size: clamp(24px, 3vw, 36px);
+            font-weight: 400;
+            line-height: 1.2;
+            margin-bottom: 8px;
+            color: var(--ink);
+        }
+        
+        .section-title em {
+            font-style: italic;
+            color: var(--teal);
+        }
+        
+        .section-intro {
+            font-size: 15px;
+            color: var(--ink2);
+            max-width: 620px;
+            margin-bottom: 36px;
+            line-height: 1.7;
+        }
+        /* ─── STEPS ─── */
+        
+        .steps-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+        
+        .step-item {
+            display: grid;
+            grid-template-columns: 48px 1fr;
+            gap: 0 20px;
+            position: relative;
+        }
+        
+        .step-item:not(:last-child) .step-line {
+            position: absolute;
+            left: 22px;
+            top: 48px;
+            bottom: 0;
+            width: 2px;
+            background: var(--border);
+        }
+        
+        .step-num-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 2px;
+        }
+        
+        .step-num {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--teal);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 15px;
+            flex-shrink: 0;
+            box-shadow: 0 0 0 4px var(--teal-lt);
+            z-index: 1;
+            position: relative;
+        }
+        
+        .step-body {
+            padding-bottom: 36px;
+        }
+        
+        .step-title {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            margin-top: 8px;
+            color: var(--ink);
+        }
+        
+        .step-desc {
+            font-size: 14px;
+            color: var(--ink2);
+            line-height: 1.7;
+            margin-bottom: 16px;
+        }
+        /* ─── MOCKUP UI ─── */
+        
+        .mockup {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--r-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 4px;
+            max-width: 480px;
+        }
+        
+        .mockup-bar {
+            background: var(--cream);
+            border-bottom: 1px solid var(--border);
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .dot-row {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        
+        .dot-r {
+            background: #fc5f57;
+        }
+        
+        .dot-y {
+            background: #fdbc2c;
+        }
+        
+        .dot-g {
+            background: #33c749;
+        }
+        
+        .mockup-url {
+            flex: 1;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            padding: 3px 10px;
+            font-size: 11px;
+            color: var(--ink3);
+            font-family: monospace;
+        }
+        
+        .mockup-body {
+            padding: 20px;
+        }
+        /* Form elements dans les mockups */
+        
+        .m-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--ink2);
+            margin-bottom: 4px;
+        }
+        
+        .m-input {
+            width: 100%;
+            border: 1.5px solid var(--border2);
+            border-radius: 6px;
+            padding: 9px 12px;
+            font-size: 13px;
+            color: var(--ink);
+            margin-bottom: 12px;
+            background: var(--page);
+            font-family: var(--ff);
+        }
+        
+        .m-input:focus-visible {
+            outline: none;
+            border-color: var(--teal);
+        }
+        
+        .m-input.filled {
+            border-color: var(--teal);
+            background: #f0fdf9;
+            color: var(--teal);
+        }
+        
+        .m-btn {
+            width: 100%;
+            padding: 11px;
+            background: var(--teal);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: var(--ff);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .m-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        
+        .m-tag {
+            padding: 4px 10px;
+            border-radius: 99px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .m-tag-teal {
+            background: var(--teal-lt);
+            color: var(--teal);
+        }
+        
+        .m-tag-amber {
+            background: var(--amber-lt);
+            color: var(--amber);
+        }
+        
+        .m-tag-red {
+            background: var(--red-lt);
+            color: var(--red);
+        }
+        
+        .m-tag-blue {
+            background: var(--blue-lt);
+            color: var(--blue);
+        }
+        
+        .m-score-bar {
+            height: 8px;
+            background: var(--border);
+            border-radius: 99px;
+            overflow: hidden;
+            margin-top: 4px;
+            margin-bottom: 12px;
+        }
+        
+        .m-score-fill {
+            height: 100%;
+            background: var(--teal);
+            border-radius: 99px;
+        }
+        
+        .m-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+        
+        .m-card {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 10px;
+            background: var(--page);
+        }
+        
+        .m-chat-bubble {
+            max-width: 75%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 13px;
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        
+        .m-chat-mine {
+            background: var(--teal);
+            color: #fff;
+            align-self: flex-end;
+            border-bottom-right-radius: 3px;
+        }
+        
+        .m-chat-their {
+            background: var(--cream);
+            color: var(--ink);
+            align-self: flex-start;
+            border-bottom-left-radius: 3px;
+        }
+        
+        .m-chat-time {
+            font-size: 9px;
+            opacity: .6;
+            text-align: right;
+            margin-top: 3px;
+        }
+        /* ─── CALLOUT BOXES ─── */
+        
+        .callout {
+            display: flex;
+            gap: 12px;
+            padding: 14px 16px;
+            border-radius: var(--r);
+            font-size: 13.5px;
+            line-height: 1.6;
+            margin: 16px 0;
+        }
+        
+        .callout-icon {
+            font-size: 18px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+        
+        .callout-body {
+            flex: 1;
+        }
+        
+        .callout-title {
+            font-weight: 700;
+            margin-bottom: 2px;
+            font-size: 13px;
+        }
+        
+        .callout-info {
+            background: var(--blue-lt);
+            border-left: 3px solid var(--blue);
+            color: #1e3a8a;
+        }
+        
+        .callout-tip {
+            background: var(--teal-lt);
+            border-left: 3px solid var(--teal);
+            color: #065f46;
+        }
+        
+        .callout-warn {
+            background: var(--amber-lt);
+            border-left: 3px solid var(--amber);
+            color: #78350f;
+        }
+        
+        .callout-err {
+            background: var(--red-lt);
+            border-left: 3px solid var(--red);
+            color: #7f1d1d;
+        }
+        /* ─── GRID CARDS ─── */
+        
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 8px;
+        }
+        
+        .feat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--r-lg);
+            padding: 20px;
+            transition: box-shadow .2s, transform .2s;
+        }
+        
+        .feat-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+        
+        .feat-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin-bottom: 12px;
+        }
+        
+        .feat-name {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        
+        .feat-desc {
+            font-size: 13px;
+            color: var(--ink2);
+            line-height: 1.6;
+        }
+        /* ─── FAQ ─── */
+        
+        .faq-item {
+            border: 1px solid var(--border);
+            border-radius: var(--r);
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        
+        .faq-q {
+            padding: 16px 20px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--surface);
+            user-select: none;
+            gap: 12px;
+        }
+        
+        .faq-q:hover {
+            background: var(--cream);
+        }
+        
+        .faq-chevron {
+            color: var(--ink3);
+            font-size: 12px;
+            transition: transform .2s;
+            flex-shrink: 0;
+        }
+        
+        .faq-chevron.open {
+            transform: rotate(180deg);
+        }
+        
+        .faq-a {
+            display: none;
+            padding: 0 20px 16px;
+            font-size: 14px;
+            color: var(--ink2);
+            line-height: 1.7;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+        }
+        
+        .faq-a.open {
+            display: block;
+            padding-top: 14px;
+        }
+        /* ─── GLOSSAIRE ─── */
+        
+        .glossaire-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 12px;
+        }
+        
+        .gloss-item {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--r);
+            padding: 16px;
+        }
+        
+        .gloss-term {
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--teal);
+            margin-bottom: 4px;
+        }
+        
+        .gloss-def {
+            font-size: 13px;
+            color: var(--ink2);
+            line-height: 1.6;
+        }
+        /* ─── PROGRESS TABLE ─── */
+        
+        .checklist {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .check-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--r);
+            font-size: 14px;
+        }
+        
+        .check-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+        
+        .check-ok {
+            background: var(--teal-lt);
+            color: var(--teal);
+        }
+        
+        .check-warn {
+            background: var(--amber-lt);
+            color: var(--amber);
+        }
+        
+        .check-text strong {
+            display: block;
+            font-weight: 600;
+        }
+        
+        .check-text span {
+            color: var(--ink3);
+            font-size: 12px;
+        }
+        /* ─── RESPONSIVE ─── */
+        
+        @media (max-width: 768px) {
+            .nav {
+                display: none;
+            }
+            .hero {
+                padding: 36px 24px;
+            }
+            .section {
+                padding: 36px 24px;
+            }
+            .mockup {
+                max-width: 100%;
+            }
+        }
+        /* ─── PRINT ─── */
+        
+        @media print {
+            .nav {
+                display: none;
+            }
+            .section {
+                break-inside: avoid;
+            }
+        }
+        /* ─── SCROLL ANIMATION ─── */
+        
+        .fade-in {
+            opacity: 0;
+            transform: translateY(16px);
+            transition: opacity .5s ease, transform .5s ease;
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: none;
+        }
+        /* ─── UTILS ─── */
+        
+        .text-muted {
+            color: var(--ink3);
+            font-size: 13px;
+        }
+        
+        .mt-sm {
+            margin-top: 8px;
+        }
+        
+        .mt-md {
+            margin-top: 16px;
+        }
+        
+        .mt-lg {
+            margin-top: 28px;
+        }
+        
+        .divider {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 32px 0;
+        }
+        
+        .inline-code {
+            background: var(--cream);
+            border: 1px solid var(--border2);
+            border-radius: 4px;
+            padding: 1px 6px;
+            font-family: monospace;
+            font-size: 12px;
+            color: var(--teal);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="page-wrap">
+
+        <!-- ═══════════════════════════════════════════
+     SIDEBAR NAVIGATION
+════════════════════════════════════════════ -->
+        <nav class="nav" id="sidebar">
+            <div class="nav-logo">
+                <div class="nav-logo-mark">
+                    <div class="nav-logo-icon">🎓</div>
+                    <div>
+                        <div class="nav-logo-name">IFRI_MentorLink</div>
+                        <div class="nav-logo-sub">Guide d'utilisation</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-section">Démarrage</div>
+            <a class="nav-link active" onclick="navTo('intro')">
+                <span class="nav-icon">🏠</span> Introduction
+            </a>
+            <a class="nav-link" onclick="navTo('fonctionnalites')">
+                <span class="nav-icon">✨</span> Fonctionnalités
+            </a>
+
+            <div class="nav-section">Utilisation</div>
+            <a class="nav-link" onclick="navTo('inscription')">
+                <span class="nav-icon">📝</span> Créer un compte
+            </a>
+            <a class="nav-link" onclick="navTo('connexion')">
+                <span class="nav-icon">🔑</span> Se connecter
+            </a>
+            <a class="nav-link" onclick="navTo('profil')">
+                <span class="nav-icon">👤</span> Mon profil
+            </a>
+            <a class="nav-link" onclick="navTo('matching')">
+                <span class="nav-icon">🤝</span> Trouver un mentor
+            </a>
+            <a class="nav-link" onclick="navTo('messagerie')">
+                <span class="nav-icon">💬</span> Messagerie
+            </a>
+            <a class="nav-link" onclick="navTo('offres')">
+                <span class="nav-icon">📋</span> Offres & Demandes
+            </a>
+
+            <div class="nav-section">Aide</div>
+            <a class="nav-link" onclick="navTo('faq')">
+                <span class="nav-icon">❓</span> Questions fréquentes
+            </a>
+            <a class="nav-link" onclick="navTo('glossaire')">
+                <span class="nav-icon">📖</span> Glossaire
+            </a>
+            <a class="nav-link" onclick="navTo('checklist')">
+                <span class="nav-icon">✅</span> Checklist débutant
+            </a>
+
+            <div class="nav-progress">
+                <div class="nav-prog-label">Lecture : <span id="prog-pct">0</span>%</div>
+                <div class="nav-prog-bar">
+                    <div class="nav-prog-fill" id="prog-fill"></div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- ═══════════════════════════════════════════
+     CONTENU PRINCIPAL
+════════════════════════════════════════════ -->
+        <main class="main" id="main-content">
+
+            <!-- ─── HERO ─── -->
+            <section class="hero" id="intro">
+                <div class="hero-eyebrow">Guide d'utilisation complet</div>
+                <h1 class="hero-title">
+                    Bienvenue sur<br><em>IFRI_MentorLink</em>
+                </h1>
+                <p class="hero-desc">
+                    Cette application te permet de trouver un mentor ou de devenir mentor pour d'autres étudiants de l'IFRI. Ce guide t'explique tout, étape par étape, même si c'est ta première fois.
+                </p>
+                <div class="hero-chips">
+                    <div class="chip">🎓 Pour tous les étudiants IFRI</div>
+                    <div class="chip">⏱️ 5 min pour démarrer</div>
+                    <div class="chip">📱 Accessible depuis ton navigateur</div>
+                </div>
+            </section>
+
+            <!-- ─── FONCTIONNALITÉS ─── -->
+            <section class="section fade-in" id="fonctionnalites">
+                <div class="section-eyebrow">Aperçu général</div>
+                <h2 class="section-title">Que peut-on faire sur <em>MentorLink ?</em></h2>
+                <p class="section-intro">L'application est organisée autour de 3 grandes fonctionnalités. Tu n'as pas besoin de tout utiliser d'un coup — commence par créer ton compte.</p>
+
+                <div class="cards-grid">
+                    <div class="feat-card">
+                        <div class="feat-icon" style="background:#d1fae5">👤</div>
+                        <div class="feat-name">Profil personnel</div>
+                        <div class="feat-desc">Renseigne ta filière, ton niveau, tes points forts et tes lacunes. Plus ton profil est complet, meilleurs seront tes matchs.</div>
+                    </div>
+                    <div class="feat-card">
+                        <div class="feat-icon" style="background:#dbeafe">🤝</div>
+                        <div class="feat-name">Matching intelligent</div>
+                        <div class="feat-desc">L'algorithme analyse tes compétences, ta filière et tes disponibilités pour te proposer les mentors les plus compatibles.</div>
+                    </div>
+                    <div class="feat-card">
+                        <div class="feat-icon" style="background:#fef3c7">💬</div>
+                        <div class="feat-name">Messagerie en direct</div>
+                        <div class="feat-desc">Une fois un match accepté, tu peux échanger instantanément avec ton mentor ou ton mentoré sans quitter l'application.</div>
+                    </div>
+                    <div class="feat-card">
+                        <div class="feat-icon" style="background:#fee2e2">📋</div>
+                        <div class="feat-name">Offres & Demandes</div>
+                        <div class="feat-desc">Consulte toutes les demandes d'aide publiées. Si tu maîtrises une matière, propose ton aide directement.</div>
+                    </div>
+                </div>
+
+                <div class="callout callout-info mt-md">
+                    <span class="callout-icon">ℹ️</span>
+                    <div class="callout-body">
+                        <div class="callout-title">Un seul compte, deux rôles</div>
+                        Tu peux être mentor et mentoré en même temps. Il suffit de renseigner tes points forts ET tes lacunes dans ton profil.
+                    </div>
+                </div>
+            </section>
+
+            <!-- ─── INSCRIPTION ─── -->
+            <section class="section fade-in" id="inscription">
+                <div class="section-eyebrow">Étape 1</div>
+                <h2 class="section-title">Créer ton <em>compte</em></h2>
+                <p class="section-intro">L'inscription prend moins de 2 minutes. Tu auras besoin d'une adresse email et de ton numéro de téléphone.</p>
+
+                <div class="steps-list">
+
+                    <div class="step-item">
+                        <div class="step-num-wrap">
+                            <div class="step-num">1</div>
+                            <div class="step-line"></div>
+                        </div>
+                        <div class="step-body">
+                            <div class="step-title">Ouvre la page d'inscription</div>
+                            <div class="step-desc">Depuis la page d'accueil, clique sur le bouton <strong>« S'inscrire »</strong> en haut à droite.</div>
+                            <div class="mockup">
+                                <div class="mockup-bar">
+                                    <div class="dot-row"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></div>
+                                    <div class="mockup-url">mentorlink.ifri.bj/pages/register.html</div>
+                                </div>
+                                <div class="mockup-body">
+                                    <div class="m-label">Email universitaire</div>
+                                    <div class="m-input filled">kokou.amevi@ifri.uac.bj</div>
+                                    <div class="m-label">Numéro de téléphone</div>
+                                    <div class="m-input filled">+229 97 00 12 34</div>
+                                    <div class="m-label">Mot de passe (min. 8 caractères)</div>
+                                    <div class="m-input">••••••••••</div>
+                                    <div class="m-label">Confirmer le mot de passe</div>
+                                    <div class="m-input">••••••••••</div>
+                                    <button class="m-btn">✓ Créer mon compte</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-item">
+                        <div class="step-num-wrap">
+                            <div class="step-num">2</div>
+                            <div class="step-line"></div>
+                        </div>
+                        <div class="step-body">
+                            <div class="step-title">Remplis le formulaire</div>
+                            <div class="step-desc">Saisis ton adresse email, ton numéro de téléphone et choisis un mot de passe d'au moins 8 caractères. Retape le mot de passe pour confirmer.</div>
+                            <div class="callout callout-warn">
+                                <span class="callout-icon">⚠️</span>
+                                <div class="callout-body">
+                                    <div class="callout-title">Email et téléphone uniques</div>
+                                    Chaque compte doit avoir une adresse email ET un numéro de téléphone différents. Si tu reçois un message d'erreur, vérifie que tu n'as pas déjà un compte.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-item">
+                        <div class="step-num-wrap">
+                            <div class="step-num">3</div>
+                        </div>
+                        <div class="step-body">
+                            <div class="step-title">Tu es automatiquement connecté·e !</div>
+                            <div class="step-desc">Après l'inscription, tu arrives directement sur ton tableau de bord. L'étape suivante : <strong>compléter ton profil</strong> pour que l'algorithme de matching puisse travailler.</div>
+                            <div class="callout callout-tip">
+                                <span class="callout-icon">💡</span>
+                                <div class="callout-body">
+                                    <div class="callout-title">Conseil</div>
+                                    Note ton mot de passe quelque part de sûr. Il n'y a pas encore de récupération par email dans cette version.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- ─── CONNEXION ─── -->
+            <section class="section fade-in" id="connexion">
+                <div class="section-eyebrow">Étape 2</div>
+                <h2 class="section-title">Se <em>connecter</em> à l'application</h2>
+                <p class="section-intro">Si tu as déjà un compte, voici comment accéder à ton espace.</p>
+
+                <div class="steps-list">
+                    <div class="step-item">
+                        <div class="step-num-wrap">
+                            <div class="step-num">1</div>
+                            <div class="step-line"></div>
+                        </div>
+                        <div class="step-body">
+                            <div class="step-title">Clique sur « Se connecter »</div>
+                            <div class="step-desc">Depuis la page d'accueil, clique sur <strong>« Connexion »</strong> dans le menu en haut.</div>
+                            <div class="mockup">
+                                <div class="mockup-bar">
+                                    <div class="dot-row"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></div>
+                                    <div class="mockup-url">mentorlink.ifri.bj/pages/login.html</div>
+                                </div>
+                                <div class="mockup-body">
+                                    <div style="text-align:center;font-size:28px;margin-bottom:16px">🎓</div>
+                                    <div class="m-label">Email</div>
+                                    <div class="m-input">kokou.amevi@ifri.uac.bj</div>
+                                    <div class="m-label">Mot de passe</div>
+                                    <div class="m-input">••••••••</div>
+                                    <button class="m-btn">→ Se connecter</button>
+                                    <p style="text-align:center;font-size:12px;color:#78716c;margin-top:12px">
+                                        Pas encore de compte ? <span style="color:#0d7d6b;font-weight:600">S'inscrire</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-item">
+                        <div class="step-num-wrap">
+                            <div class="step-num">2</div>
+                        </div>
+                        <div class="step-body">
+                            <div class="step-title">Saisis ton email et mot de passe</div>
+                            <div class="step-desc">Utilise l'adresse email avec laquelle tu t'es inscrit·e, et ton mot de passe. Si tu te trompes 3 fois, attends quelques secondes avant de réessayer.</div>
+                            <div class="callout callout-err">
+                                <span class="callout-icon">🚫</span>
+                                <div class="callout-body">
+                                    <div class="callout-title">Erreur « Identifiants invalides »</div>
+                                    Cela signifie que l'email ou le mot de passe est incorrect. Vérifie les majuscules/minuscules et les espaces.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ─── PROFIL ─── -->
+            <section class="section fade-in" id="profil">
+                <div class="section-eyebrow">Étape 3 — Très important !</div>
+                <h2 class="section-title">Compléter ton <em>profil</em></h2>
+                <p class="section-intro">Ton profil est la base de tout. Plus il est complet, plus l'algorithme trouvera des correspondances précises pour toi.</p>
+
+                <div class="steps-list">
+
+                    <div class="step-item">
+                        <div class="step-num-wrap">
+                            <div class="step-num">1</div>
+                            <div class="step-line"></div>
+                        </div>
+                        <div class="step-body">
+                            <div class="step-title">Renseigne tes informations de base</div>
+                            <div class="step-desc">Va dans <strong>Mon profil</strong> depuis le menu. Saisis ton nom, prénom, sélectionne ta filière et ton niveau.</div>
+                            <div class="mockup">
+                                <div class="mockup-bar">
+                                    <div class="dot-row"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></div>
+                                    <div class="mockup-url">mentorlink.ifri.bj/pages/profile.html</div>
+                                </div>
+                                <div class="mockup-body">
+                                    <div class="m-row">
+                                        <div style="flex:1">
+                                            <div class="m-label">Prénom</div>
+                                            <div class="m-input filled">Kokou</div>
+                                        </div>
+                                        <div style="flex:1">
+                                            <div class="m-label">Nom</div>
+                                            <div class="m-input filled">Amévi</div>
+                                        </div>
+                                    </div>
+                                    <div class="m-label">Filière</div>
+                                    <div class="m-input filled" style="display:flex;align-items:center;gap:6px">
+                                        <span>Génie Logiciel (GL)</span><span style="margin-left:auto">▾</span>
+                                    </div>
+                                    <div class="m-label">Niveau</div>
+                                    <div class="m-input filled" style="display:flex;align-items:center;gap:6px">
+                                        <span>Licence 2</span><span style="margin-left:auto">▾</span>
+                                    </div>
+                                    <div class="m-label">Courte bio (optionnel)</div>
+                                    <div class="m-input" style="height:60px;padding-top:8px;font-size:12px;color:#78716c">Passionné par le développement web et les algorithmes…</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-item">
+                        <div class="step-num-wrap">
+                            <div class="step-num">2</div>
+                            <div class="step-line"></div>
+                        </div>
+                        <div class="step-body">
+                            <div class="step-title">Ajoute tes compétences</div>
+                            <div class="step-desc">C'est la partie la plus importante. Tu dois ajouter :<br> ✅ <strong>Tes points forts</strong> — les matières que tu maîtrises et peux enseigner<br> ❌ <strong>Tes lacunes</strong> — les matières où tu as besoin d'aide
+                            </div>
+                            <div class="mockup">
+                                <div class="mockup-bar">
+                                    <div class="dot-row"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></div>
+                                    <div class="mockup-url">Mon profil → Compétences</div>
+                                </div>
+                                <div class="mockup-body">
+                                    <div style="font-size:13px;font-weight:600;margin-bottom:10px">Mes points forts</div>
+                                    <div class="m-row" style="flex-wrap:wrap">
+                                        <span class="m-tag m-tag-teal">Python ✓</span>
+                                        <span class="m-tag m-tag-teal">Algorithmes ✓</span>
+                                        <span class="m-tag m-tag-teal">+ Ajouter</span>
+                                    </div>
+                                    <div style="font-size:13px;font-weight:600;margin:12px 0 10px">Mes lacunes</div>
+                                    <div class="m-row" style="flex-wrap:wrap">
+                                        <span class="m-tag m-tag-red">SQL ✗</span>
+                                        <span class="m-tag m-tag-red">Réseaux ✗</span>
+                                        <span class="m-tag m-tag-red">+ Ajouter</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="callout callout-tip mt-sm">
+                                <span class="callout-icon">💡</span>
+                                <div class="callout-body">
+                                    <div class="callout-title">Plus tu en mets, mieux c'est</div>
+                                    Ajoute au moins 2-3 points forts ET 2-3 lacunes pour que l'algorithme ait suffisamment d'informations.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-item">
+                        <div class="step-num-wrap">
+                            <div class="step-num">3</div>
+                        </div>
+                        <div class="step-body">
+                            <div class="step-title">Renseigne tes disponibilités</div>
+                            <div class="step-desc">Indique les jours et heures où tu es libre pour des sessions de mentorat. Tu peux ajouter autant de créneaux que tu veux.</div>
+                            <div class="mockup">
+                                <div class="mockup-bar">
+                                    <div class="dot-row"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></div>
+                                    <div class="mockup-url">Mon profil → Disponibilités</div>
+                                </div>
+                                <div class="mockup-body">
+                                    <div class="m-card">
+                                        <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px">
+                                            <div><strong>Lundi</strong> · 08h00 → 12h00</div>
+                                            <span class="m-tag m-tag-teal">Actif</span>
+                                        </div>
+                                    </div>
+                                    <div class="m-card">
+                                        <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px">
+                                            <div><strong>Mercredi</strong> · 14h00 → 17h00</div>
+                                            <span class="m-tag m-tag-teal">Actif</span>
+                                        </div>
+                                    </div>
+                                    <div style="border:1.5px dashed #d6d3d1;border-radius:8px;padding:12px;text-align:center;font-size:13px;color:#78716c;cursor:pointer">
+                                        + Ajouter un créneau
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- ─── MATCHING ─── -->
+            <section class="section fade-in" id="matching">
+                <div class="section-eyebrow">Fonctionnalité principale</div>
+                <h2 class="section-title">Trouver un <em>mentor</em></h2>
+                <p class="section-intro">L'algorithme de matching analyse ton profil et te propose les mentors les plus compatibles. Voici comment l'utiliser.</p>
+
+                <div class="steps-list">
+
+                    <div class="step-item">
+                        <div class="step-num-wrap">
+                            <div class="step-num">1</div>
+                            <div class="step-line"></div>
+                        </div>
+                        <div class="step-body">
+                            <div class="step-title">Clique sur « Trouver un mentor »</div>
+                            <div class="step-desc">Depuis ton tableau de bord ou le menu, accède à la page de matching.</div>
+                        </div>
+                    </div>
+
+                    <div class="step-item">
+                        <div class="step-num-wrap">
+                            <div class="step-num">2</div>
+                            <div class="step-line"></div>
+                        </div>
+                        <div class="step-body">
+                            <div class="step-title">Crée une demande de mentorat</div>
+                            <div class="step-desc">Sélectionne la matière sur laquelle tu veux être aidé·e, décris brièvement ton besoin et choisis le format (présentiel, en ligne ou les deux).</div>
+                            <div class="mockup">
+                                <div class="mockup-bar">
+                                    <div class="dot-row"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></div>
+                                    <div class="mockup-url">mentorlink.ifri.bj/pages/matching.html</div>
+                                </div>
+                                <div class="mockup-body">
+                                    <div class="m-label">Matière recherchée</div>
+                                    <div class="m-input filled" style="display:flex;align-items:center">
+                                        <span>SQL & Bases de données</span><span style="margin-left:auto">▾</span>
+                                    </div>
+                                    <div class="m-label">Décris ton besoin</div>
+                                    <div class="m-input" style="height:60px;padding-top:8px;font-size:12px;color:#78716c">J'ai du mal avec les jointures et les sous-requêtes SQL...</div>
+                                    <div class="m-label">Format souhaité</div>
+                                    <div class="m-row">
+                                        <span class="m-tag m-tag-blue" style="cursor:pointer">Présentiel</span>
+                                        <span class="m-tag m-tag-teal" style="cursor:pointer;border:2px solid #0d7d6b">En ligne ✓</span>
+                                        <span class="m-tag m-tag-amber" style="cursor:pointer">Les deux</span>
+                                    </div>
+                                    <button class="m-btn mt-md">🔍 Lancer le matching</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-item">
+                        <div class="step-num-wrap">
+                            <div class="step-num">3</div>
+                            <div class="step-line"></div>
+                        </div>
+                        <div class="step-body">
+                            <div class="step-title">Consulte les résultats</div>
+                            <div class="step-desc">L'algorithme affiche jusqu'à <strong>5 mentors</strong>, classés par score de compatibilité. Pour chaque mentor, tu vois :<br>• Ses compétences en commun avec tes lacunes<br>• Sa filière et son niveau<br>• Son score de compatibilité</div>
+                            <div class="mockup">
+                                <div class="mockup-bar">
+                                    <div class="dot-row"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></div>
+                                    <div class="mockup-url">Résultats du matching</div>
+                                </div>
+                                <div class="mockup-body">
+                                    <div class="m-card">
+                                        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+                                            <div class="m-avatar" style="background:#d1fae5">🥇</div>
+                                            <div>
+                                                <div style="font-weight:700;font-size:13px">Sèmèvo Adanlin</div>
+                                                <div style="font-size:11px;color:#78716c">Génie Logiciel · L3</div>
+                                            </div>
+                                            <div style="margin-left:auto;font-size:18px;font-weight:700;color:#0d7d6b">87%</div>
+                                        </div>
+                                        <div class="m-row" style="flex-wrap:wrap">
+                                            <span class="m-tag m-tag-teal" style="font-size:10px">SQL ✓</span>
+                                            <span class="m-tag m-tag-teal" style="font-size:10px">Python ✓</span>
+                                        </div>
+                                        <div class="m-score-bar">
+                                            <div class="m-score-fill" style="width:87%"></div>
+                                        </div>
+                                        <button class="m-btn" style="padding:8px">Contacter ce mentor →</button>
+                                    </div>
+                                    <div class="m-card" style="opacity:.7">
+                                        <div style="display:flex;align-items:center;gap:10px">
+                                            <div class="m-avatar" style="background:#fef3c7">🥈</div>
+                                            <div>
+                                                <div style="font-weight:700;font-size:13px">Fidèle Ahounou</div>
+                                                <div style="font-size:11px;color:#78716c">Intelligence Artificielle · L3</div>
+                                            </div>
+                                            <div style="margin-left:auto;font-size:18px;font-weight:700;color:#b45309">62%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-item">
+                        <div class="step-num-wrap">
+                            <div class="step-num">4</div>
+                        </div>
+                        <div class="step-body">
+                            <div class="step-title">Accepte ou refuse un match</div>
+                            <div class="step-desc">Clique sur <strong>« Contacter ce mentor »</strong> sur le profil qui t'intéresse. Si le mentor accepte aussi, une conversation s'ouvre automatiquement dans la messagerie.</div>
+                            <div class="callout callout-info">
+                                <span class="callout-icon">ℹ️</span>
+                                <div class="callout-body">
+                                    <div class="callout-title">Comment fonctionne le score ?</div>
+                                    Le score est calculé sur 3 critères : compatibilité des compétences (50%), proximité de filière (30%) et disponibilités communes (20%). Un score de 80% ou plus est excellent.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- ─── MESSAGERIE ─── -->
+            <section class="section fade-in" id="messagerie">
+                <div class="section-eyebrow">Communication</div>
+                <h2 class="section-title">Utiliser la <em>messagerie</em></h2>
+                <p class="section-intro">Une fois un match accepté des deux côtés, tu peux échanger des messages en temps réel avec ton mentor ou mentoré.</p>
+
+                <div class="steps-list">
+
+                    <div class="step-item">
+                        <div class="step-num-wrap">
+                            <div class="step-num">1</div>
+                            <div class="step-line"></div>
+                        </div>
+                        <div class="step-body">
+                            <div class="step-title">Accède à la messagerie</div>
+                            <div class="step-desc">Depuis le menu, clique sur l'icône 💬 <strong>Messages</strong>. Tu vois la liste de toutes tes conversations actives.</div>
+                        </div>
+                    </div>
+
+                    <div class="step-item">
+                        <div class="step-num-wrap">
+                            <div class="step-num">2</div>
+                            <div class="step-line"></div>
+                        </div>
+                        <div class="step-body">
+                            <div class="step-title">Sélectionne une conversation</div>
+                            <div class="step-desc">Clique sur le nom d'un mentor ou mentoré dans la liste de gauche pour ouvrir la conversation.</div>
+                            <div class="mockup">
+                                <div class="mockup-bar">
+                                    <div class="dot-row"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></div>
+                                    <div class="mockup-url">mentorlink.ifri.bj/pages/messages.html</div>
+                                </div>
+                                <div class="mockup-body">
+                                    <div style="display:flex;flex-direction:column;gap:4px">
+                                        <div class="m-chat-bubble m-chat-their">
+                                            Salut ! Je suis disponible lundi matin pour une session SQL 😊
+                                            <div class="m-chat-time">09:14</div>
+                                        </div>
+                                        <div class="m-chat-bubble m-chat-mine" style="align-self:flex-end">
+                                            Super ! On se retrouve à 9h sur Google Meet ?
+                                            <div class="m-chat-time">09:17</div>
+                                        </div>
+                                        <div class="m-chat-bubble m-chat-their">
+                                            Parfait, je t'envoie le lien 👍
+                                            <div class="m-chat-time">09:18</div>
+                                        </div>
+                                    </div>
+                                    <div style="display:flex;gap:8px;margin-top:14px">
+                                        <div style="flex:1;border:1px solid #e7e5e4;border-radius:20px;padding:8px 14px;font-size:12px;color:#78716c">Écrire un message...</div>
+                                        <div style="width:36px;height:36px;background:#0d7d6b;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px">➤</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-item">
+                        <div class="step-num-wrap">
+                            <div class="step-num">3</div>
+                        </div>
+                        <div class="step-body">
+                            <div class="step-title">Envoie un message</div>
+                            <div class="step-desc">Tape ton message dans le champ en bas et appuie sur <strong>Entrée</strong> ou clique sur le bouton d'envoi ➤. Ton message apparaît instantanément des deux côtés.</div>
+                            <div class="callout callout-tip">
+                                <span class="callout-icon">💡</span>
+                                <div class="callout-body">
+                                    <div class="callout-title">Messages non lus</div>
+                                    Un chiffre en rouge sur l'icône Messages dans le menu indique le nombre de messages que tu n'as pas encore lus.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- ─── OFFRES ─── -->
+            <section class="section fade-in" id="offres">
+                <div class="section-eyebrow">Aller plus loin</div>
+                <h2 class="section-title">Offres & <em>Demandes</em> publiques</h2>
+                <p class="section-intro">En plus du matching automatique, tu peux parcourir toutes les demandes publiées et y répondre directement si tu peux aider.</p>
+
+                <div class="steps-list">
+
+                    <div class="step-item">
+                        <div class="step-num-wrap">
+                            <div class="step-num">1</div>
+                            <div class="step-line"></div>
+                        </div>
+                        <div class="step-body">
+                            <div class="step-title">Consulter la marketplace</div>
+                            <div class="step-desc">Va dans <strong>Offres & Demandes</strong> dans le menu. Tu verras toutes les demandes actives publiées par les autres étudiants. Tu peux filtrer par matière, filière ou format.</div>
+                            <div class="mockup">
+                                <div class="mockup-bar">
+                                    <div class="dot-row"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></div>
+                                    <div class="mockup-url">Offres & Demandes</div>
+                                </div>
+                                <div class="mockup-body">
+                                    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+                                        <span class="m-tag m-tag-teal" style="cursor:pointer">Toutes</span>
+                                        <span class="m-tag" style="background:#f5f0e8;cursor:pointer">Python</span>
+                                        <span class="m-tag" style="background:#f5f0e8;cursor:pointer">SQL</span>
+                                        <span class="m-tag" style="background:#f5f0e8;cursor:pointer">Réseaux</span>
+                                    </div>
+                                    <div class="m-card">
+                                        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+                                            <div>
+                                                <div style="font-weight:700;font-size:13px">Adja Diallo · SI · L1</div>
+                                                <span class="m-tag m-tag-red" style="font-size:10px">SQL requis</span>
+                                            </div>
+                                            <span class="m-tag m-tag-blue" style="font-size:10px">En ligne</span>
+                                        </div>
+                                        <p style="font-size:12px;color:#44403c;margin-bottom:10px">J'ai du mal avec les jointures SQL pour mon cours de BDD...</p>
+                                        <button class="m-btn" style="padding:7px;font-size:12px;background:#1d4ed8">Proposer mon aide →</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-item">
+                        <div class="step-num-wrap">
+                            <div class="step-num">2</div>
+                        </div>
+                        <div class="step-body">
+                            <div class="step-title">Utiliser la recherche</div>
+                            <div class="step-desc">Dans la barre de recherche, tape un mot-clé comme <span class="inline-code">python</span> ou <span class="inline-code">réseaux</span> pour trouver des demandes spécifiques.</div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- ─── FAQ ─── -->
+            <section class="section fade-in" id="faq">
+                <div class="section-eyebrow">Aide</div>
+                <h2 class="section-title">Questions <em>fréquentes</em></h2>
+                <p class="section-intro">Les réponses aux questions qu'on nous pose le plus souvent.</p>
+
+                <div id="faq-list">
+
+                    <div class="faq-item">
+                        <div class="faq-q" onclick="toggleFaq(this)">
+                            Puis-je être à la fois mentor et mentoré ?
+                            <span class="faq-chevron">▾</span>
+                        </div>
+                        <div class="faq-a">
+                            Oui, absolument ! Il suffit de renseigner tes <strong>points forts</strong> (matières que tu peux enseigner) ET tes <strong>lacunes</strong> (matières où tu as besoin d'aide) dans ton profil. L'application te considérera alors
+                            comme les deux selon les demandes.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-q" onclick="toggleFaq(this)">
+                            Pourquoi je ne trouve aucun mentor dans les résultats ?
+                            <span class="faq-chevron">▾</span>
+                        </div>
+                        <div class="faq-a">
+                            Plusieurs raisons possibles :<br> 1. Ton profil n'est pas assez complet (pas assez de compétences renseignées)<br> 2. Aucun mentor disponible ne maîtrise la matière que tu cherches<br> 3. Les disponibilités ne se croisent avec
+                            aucun mentor<br><br>
+                            <strong>Solution :</strong> Complète ton profil avec plus de lacunes, et vérifie tes disponibilités.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-q" onclick="toggleFaq(this)">
+                            Comment fonctionne le score de compatibilité ?
+                            <span class="faq-chevron">▾</span>
+                        </div>
+                        <div class="faq-a">
+                            Le score final est calculé sur 3 critères :<br><br> 🟢 <strong>Compétences (50%)</strong> — Est-ce que les points forts du mentor correspondent à tes lacunes ?<br> 🔵 <strong>Filière (30%)</strong> — Même filière = 100 pts,
+                            filière proche = 50 pts, filière différente = 0<br> 🟡 <strong>Disponibilités (20%)</strong> — Nombre de minutes de créneaux en commun<br><br> Un score de 80% ou plus signifie une très bonne compatibilité.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-q" onclick="toggleFaq(this)">
+                            Que se passe-t-il quand j'accepte un match ?
+                            <span class="faq-chevron">▾</span>
+                        </div>
+                        <div class="faq-a">
+                            Quand tu acceptes un match, une <strong>conversation est automatiquement créée</strong> dans la messagerie. Tu peux immédiatement commencer à discuter avec ton mentor pour organiser vos sessions.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-q" onclick="toggleFaq(this)">
+                            Comment changer mon mot de passe ?
+                            <span class="faq-chevron">▾</span>
+                        </div>
+                        <div class="faq-a">
+                            Va dans <strong>Mon profil</strong> → <strong>Sécurité</strong> → <strong>Changer le mot de passe</strong>. Tu devras saisir ton ancien mot de passe, puis le nouveau (minimum 8 caractères).
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-q" onclick="toggleFaq(this)">
+                            Puis-je supprimer une demande de mentorat ?
+                            <span class="faq-chevron">▾</span>
+                        </div>
+                        <div class="faq-a">
+                            Oui, tant que la demande est encore en statut <strong>« En attente »</strong>. Va dans la liste de tes demandes et clique sur la corbeille 🗑️. Une demande déjà acceptée ne peut pas être supprimée, seulement marquée comme terminée.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-q" onclick="toggleFaq(this)">
+                            L'application fonctionne-t-elle sur téléphone ?
+                            <span class="faq-chevron">▾</span>
+                        </div>
+                        <div class="faq-a">
+                            Oui, l'interface est responsive et fonctionne sur n'importe quel navigateur mobile (Chrome, Firefox, Safari). Ouvre simplement l'adresse de l'application dans ton navigateur.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-q" onclick="toggleFaq(this)">
+                            Mes données sont-elles sécurisées ?
+                            <span class="faq-chevron">▾</span>
+                        </div>
+                        <div class="faq-a">
+                            Oui. Ton mot de passe est <strong>haché</strong> (chiffré de façon irréversible) avant d'être stocké en base de données. L'authentification utilise des tokens JWT sécurisés. Tes données personnelles ne sont visibles que par
+                            toi et les personnes avec qui tu es en match.
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- ─── GLOSSAIRE ─── -->
+            <section class="section fade-in" id="glossaire">
+                <div class="section-eyebrow">Lexique</div>
+                <h2 class="section-title">Glossaire des <em>termes</em></h2>
+                <p class="section-intro">Tu n'es pas familier avec certains mots ? Voici les définitions simples.</p>
+
+                <div class="glossaire-grid">
+
+                    <div class="gloss-item">
+                        <div class="gloss-term">Mentor</div>
+                        <div class="gloss-def">Étudiant qui aide les autres dans une matière qu'il maîtrise bien. Avoir le rôle de mentor ne veut pas dire être professeur — c'est juste quelqu'un qui sait mieux.</div>
+                    </div>
+
+                    <div class="gloss-item">
+                        <div class="gloss-term">Mentoré</div>
+                        <div class="gloss-def">Étudiant qui cherche de l'aide dans une matière. Chacun peut être mentoré — ce n'est pas une honte de demander de l'aide.</div>
+                    </div>
+
+                    <div class="gloss-item">
+                        <div class="gloss-term">Matching</div>
+                        <div class="gloss-def">Processus automatique de mise en correspondance d'un mentor et d'un mentoré selon leurs profils. L'algorithme calcule un score de compatibilité.</div>
+                    </div>
+
+                    <div class="gloss-item">
+                        <div class="gloss-term">Score de compatibilité</div>
+                        <div class="gloss-def">Pourcentage entre 0% et 100% indiquant à quel point un mentor et un mentoré sont bien assortis. Un score élevé signifie une bonne correspondance.</div>
+                    </div>
+
+                    <div class="gloss-item">
+                        <div class="gloss-term">Points forts</div>
+                        <div class="gloss-def">Matières ou compétences que tu maîtrises suffisamment pour aider quelqu'un d'autre. Ex : Python, Algorithmes, SQL.</div>
+                    </div>
+
+                    <div class="gloss-item">
+                        <div class="gloss-term">Lacunes</div>
+                        <div class="gloss-def">Matières ou compétences sur lesquelles tu as besoin d'aide. Les renseigner permet à l'algorithme de te trouver des mentors adaptés.</div>
+                    </div>
+
+                    <div class="gloss-item">
+                        <div class="gloss-term">Disponibilités</div>
+                        <div class="gloss-def">Les créneaux horaires où tu es libre pour des sessions de mentorat. Exemple : Lundi 8h-12h, Mercredi 14h-17h.</div>
+                    </div>
+
+                    <div class="gloss-item">
+                        <div class="gloss-term">Conversation</div>
+                        <div class="gloss-def">Espace de messagerie créé automatiquement entre un mentor et un mentoré après qu'ils ont tous les deux accepté leur match.</div>
+                    </div>
+
+                    <div class="gloss-item">
+                        <div class="gloss-term">JWT (Token)</div>
+                        <div class="gloss-def">Clé de sécurité numérique stockée dans ton navigateur qui prouve que tu es bien connecté·e, sans avoir à entrer ton mot de passe à chaque action.</div>
+                    </div>
+
+                    <div class="gloss-item">
+                        <div class="gloss-term">WebSocket</div>
+                        <div class="gloss-def">Technologie permettant la messagerie en temps réel. Grâce à elle, tu reçois les messages instantanément sans recharger la page.</div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- ─── CHECKLIST ─── -->
+            <section class="section fade-in" id="checklist">
+                <div class="section-eyebrow">Pour bien démarrer</div>
+                <h2 class="section-title">Checklist du <em>débutant</em></h2>
+                <p class="section-intro">Suis ces étapes dans l'ordre et tu seras opérationnel·le en moins de 10 minutes.</p>
+
+                <div class="checklist">
+                    <div class="check-item">
+                        <div class="check-icon check-ok">✓</div>
+                        <div class="check-text">
+                            <strong>Créer ton compte</strong>
+                            <span>Email + téléphone + mot de passe → bouton S'inscrire</span>
+                        </div>
+                    </div>
+                    <div class="check-item">
+                        <div class="check-icon check-ok">✓</div>
+                        <div class="check-text">
+                            <strong>Remplir les infos de base du profil</strong>
+                            <span>Nom, prénom, filière, niveau</span>
+                        </div>
+                    </div>
+                    <div class="check-item">
+                        <div class="check-icon check-warn">!</div>
+                        <div class="check-text">
+                            <strong>Ajouter au moins 2 points forts</strong>
+                            <span>Les matières que tu maîtrises</span>
+                        </div>
+                    </div>
+                    <div class="check-item">
+                        <div class="check-icon check-warn">!</div>
+                        <div class="check-text">
+                            <strong>Ajouter au moins 2 lacunes</strong>
+                            <span>Les matières où tu veux progresser</span>
+                        </div>
+                    </div>
+                    <div class="check-item">
+                        <div class="check-icon check-warn">!</div>
+                        <div class="check-text">
+                            <strong>Renseigner tes disponibilités</strong>
+                            <span>Minimum 1 créneau pour être trouvable</span>
+                        </div>
+                    </div>
+                    <div class="check-item">
+                        <div class="check-icon check-ok">✓</div>
+                        <div class="check-text">
+                            <strong>Lancer une recherche de mentor</strong>
+                            <span>Matching → Choisir une matière → Lancer</span>
+                        </div>
+                    </div>
+                    <div class="check-item">
+                        <div class="check-icon check-ok">✓</div>
+                        <div class="check-text">
+                            <strong>Accepter un match et envoyer un premier message</strong>
+                            <span>La conversation s'ouvre automatiquement</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="callout callout-tip mt-lg">
+                    <span class="callout-icon">🎉</span>
+                    <div class="callout-body">
+                        <div class="callout-title">Tu es prêt·e !</div>
+                        Si tu as suivi toutes ces étapes, ton profil est complet et l'application peut te trouver les meilleures correspondances. Bon courage dans tes sessions de mentorat !
+                    </div>
+                </div>
+
+                <div style="margin-top:40px;padding:28px;background:var(--ink);border-radius:var(--r-lg);color:#fff;text-align:center">
+                    <div style="font-family:var(--fs);font-size:22px;margin-bottom:8px">
+                        Une question ? Un problème ?
+                    </div>
+                    <p style="color:#a8a29e;font-size:14px;margin-bottom:16px">
+                        Contacte l'équipe de développement via l'encadrement IFRI ou ouvre une issue sur le dépôt GitHub du projet.
+                    </p>
+                    <div style="display:inline-flex;align-items:center;gap:8px;background:var(--teal);color:#fff;padding:10px 22px;border-radius:8px;font-size:14px;font-weight:600">
+                        📂 Dépôt GitHub du projet
+                    </div>
+                </div>
+
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        /* ──────────────────────────────────────────────
+           NAVIGATION SIDEBAR
+           ────────────────────────────────────────────── */
+        function navTo(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        }
+
+        /* ──────────────────────────────────────────────
+           PROGRESS BAR & ACTIVE NAV
+           ────────────────────────────────────────────── */
+        const sections = ['intro', 'fonctionnalites', 'inscription', 'connexion',
+            'profil', 'matching', 'messagerie', 'offres',
+            'faq', 'glossaire', 'checklist'
+        ];
+
+        const sectionEls = sections.map(id => document.getElementById(id));
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.body.scrollHeight - window.innerHeight;
+            const pct = docHeight > 0 ? Math.round((scrollTop / docHeight) * 100) : 0;
+
+            document.getElementById('prog-fill').style.width = pct + '%';
+            document.getElementById('prog-pct').textContent = pct;
+
+            // Active nav item
+            let current = 0;
+            sectionEls.forEach((el, i) => {
+                if (el && el.getBoundingClientRect().top <= 100) current = i;
+            });
+
+            navLinks.forEach((link, i) => {
+                link.classList.toggle('active', i === current);
+            });
+        });
+
+        /* ──────────────────────────────────────────────
+           FAQ TOGGLE
+           ────────────────────────────────────────────── */
+        function toggleFaq(header) {
+            const answer = header.nextElementSibling;
+            const chevron = header.querySelector('.faq-chevron');
+            const isOpen = answer.classList.contains('open');
+
+            // Fermer tous les autres
+            document.querySelectorAll('.faq-a.open').forEach(a => {
+                a.classList.remove('open');
+                a.previousElementSibling.querySelector('.faq-chevron').classList.remove('open');
+            });
+
+            if (!isOpen) {
+                answer.classList.add('open');
+                chevron.classList.add('open');
+            }
+        }
+
+        /* ──────────────────────────────────────────────
+           FADE-IN AU SCROLL
+           ────────────────────────────────────────────── */
+        const fadeEls = document.querySelectorAll('.fade-in');
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.08
+        });
+
+        fadeEls.forEach(el => observer.observe(el));
+    </script>
+</body>
+
+</html>
