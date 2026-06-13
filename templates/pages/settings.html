@@ -1,0 +1,202 @@
+{% extends 'base.html' %}
+
+{% block title %}Paramètres - MentorLink{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto space-y-6">
+
+    <h1 class="text-2xl font-bold text-on-surface">Paramètres</h1>
+
+    <!-- COMPTE -->
+    <div class="bg-white rounded-2xl border border-outline-variant/20 overflow-hidden">
+        <div class="px-6 py-4 border-b border-outline-variant/20">
+            <h2 class="font-semibold text-on-surface flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">manage_accounts</span>
+                Compte
+            </h2>
+        </div>
+        <div class="divide-y divide-outline-variant/10">
+            <a href="/profile/edit/" class="flex items-center justify-between px-6 py-4 hover:bg-surface-container transition">
+                <div>
+                    <p class="font-medium text-sm">Modifier mon profil</p>
+                    <p class="text-xs text-outline">Nom, photo, bio, filière</p>
+                </div>
+                <span class="material-symbols-outlined text-outline">chevron_right</span>
+            </a>
+            <div class="flex items-center justify-between px-6 py-4">
+                <div>
+                    <p class="font-medium text-sm">Email</p>
+                    <p class="text-xs text-outline">{{ user.email }}</p>
+                </div>
+                <span class="text-xs text-outline">Non modifiable</span>
+            </div>
+            <div class="flex items-center justify-between px-6 py-4">
+                <div>
+                    <p class="font-medium text-sm">Membre depuis</p>
+                    <p class="text-xs text-outline">{{ user.date_joined|date:"d F Y" }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SÉCURITÉ -->
+    <div class="bg-white rounded-2xl border border-outline-variant/20 overflow-hidden">
+        <div class="px-6 py-4 border-b border-outline-variant/20">
+            <h2 class="font-semibold text-on-surface flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">lock</span>
+                Sécurité
+            </h2>
+        </div>
+        <div class="px-6 py-4">
+            <form method="POST" action="/settings/password/" class="space-y-4">
+                {% csrf_token %}
+                <div>
+                    <label class="block text-sm font-medium text-on-surface-variant mb-1">Mot de passe actuel</label>
+                    <input type="password" name="old_password" required class="w-full px-3 py-2.5 border border-outline-variant rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-on-surface-variant mb-1">Nouveau mot de passe</label>
+                    <input type="password" name="new_password" required class="w-full px-3 py-2.5 border border-outline-variant rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-on-surface-variant mb-1">Confirmer le nouveau mot de passe</label>
+                    <input type="password" name="confirm_password" required class="w-full px-3 py-2.5 border border-outline-variant rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20">
+                </div>
+                <button type="submit" class="px-4 py-2 bg-primary text-white rounded-xl text-sm font-medium hover:bg-primary/90 transition">
+                    Changer le mot de passe
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- COMPÉTENCES -->
+    <div class="bg-white rounded-2xl border border-outline-variant/20 overflow-hidden">
+        <div class="px-6 py-4 border-b border-outline-variant/20">
+            <h2 class="font-semibold text-on-surface flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">psychology</span>
+                Compétences & Lacunes
+            </h2>
+        </div>
+        <div class="px-6 py-4">
+            <p class="text-sm text-outline mb-3">Gérez vos domaines de maîtrise et ceux où vous souhaitez progresser.</p>
+            <a href="/profile/edit/#competences" class="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary rounded-xl text-sm font-medium hover:bg-primary/20 transition">
+                <span class="material-symbols-outlined text-sm">edit</span>
+                Modifier mes compétences
+            </a>
+        </div>
+    </div>
+
+    <!-- PRÉFÉRENCES -->
+    <div class="bg-white rounded-2xl border border-outline-variant/20 overflow-hidden">
+        <div class="px-6 py-4 border-b border-outline-variant/20">
+            <h2 class="font-semibold text-on-surface flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">tune</span>
+                Préférences
+            </h2>
+        </div>
+        <div class="divide-y divide-outline-variant/10">
+            <!-- Mode sombre -->
+            <div class="flex items-center justify-between px-6 py-4">
+                <div>
+                    <p class="font-medium text-sm">Mode sombre</p>
+                    <p class="text-xs text-outline">Changer l'apparence de l'application</p>
+                </div>
+                <button id="darkModeToggle" onclick="toggleDarkMode()" class="relative w-12 h-6 rounded-full transition-colors duration-200 focus:outline-none">
+                    <span class="absolute inset-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200" id="darkModeThumb"></span>
+                </button>
+            </div>
+            <!-- Langue -->
+            <div class="flex items-center justify-between px-6 py-4">
+                <div>
+                    <p class="font-medium text-sm">Langue</p>
+                    <p class="text-xs text-outline">Français</p>
+                </div>
+                <span class="text-xs text-outline">Bientôt disponible</span>
+            </div>
+            <!-- Notifications -->
+            <div class="flex items-center justify-between px-6 py-4">
+                <div>
+                    <p class="font-medium text-sm">Notifications</p>
+                    <p class="text-xs text-outline">Messages et alertes</p>
+                </div>
+                <span class="text-xs text-outline">Bientôt disponible</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- DÉCONNEXION -->
+    <div class="bg-white rounded-2xl border border-outline-variant/20 overflow-hidden">
+        <a href="/logout/" class="flex items-center gap-3 px-6 py-4 text-error hover:bg-error-container/10 transition">
+            <span class="material-symbols-outlined">logout</span>
+            <span class="font-medium text-sm">Se déconnecter</span>
+        </a>
+    </div>
+
+    <!-- SUPPRIMER MON COMPTE -->
+    <div class="bg-white rounded-2xl border border-red-200 overflow-hidden">
+        <div class="px-6 py-4 border-b border-red-100">
+            <h2 class="font-semibold text-red-600 flex items-center gap-2">
+                <span class="material-symbols-outlined">delete_forever</span>
+                Zone de danger
+            </h2>
+        </div>
+        <div class="px-6 py-4">
+            <p class="text-sm text-outline mb-4">La suppression de votre compte est irréversible. Toutes vos données seront perdues.</p>
+            <button onclick="document.getElementById('deleteModal').classList.remove('hidden')" class="px-4 py-2 bg-red-600 text-white rounded-xl text-sm font-medium hover:bg-red-700 transition">
+                Supprimer mon compte
+            </button>
+        </div>
+    </div>
+
+</div>
+
+<!-- Modal suppression compte -->
+<div id="deleteModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl p-6 max-w-sm w-full">
+        <h3 class="font-bold text-lg mb-2">Supprimer mon compte</h3>
+        <p class="text-sm text-outline mb-4">Entrez votre mot de passe pour confirmer la suppression.</p>
+        <form method="POST" action="/settings/delete/">
+            {% csrf_token %}
+            <input type="password" name="password" placeholder="Votre mot de passe" required
+                class="w-full px-3 py-2.5 border border-outline-variant rounded-xl text-sm mb-4 focus:outline-none focus:ring-2 focus:ring-red-300">
+            <div class="flex gap-3">
+                <button type="button" onclick="document.getElementById('deleteModal').classList.add('hidden')"
+                    class="flex-1 px-4 py-2 border border-outline-variant rounded-xl text-sm font-medium hover:bg-surface-container transition">
+                    Annuler
+                </button>
+                <button type="submit" class="flex-1 px-4 py-2 bg-red-600 text-white rounded-xl text-sm font-medium hover:bg-red-700 transition">
+                    Supprimer
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function toggleDarkMode() {
+    const isDark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('darkMode', isDark ? 'true' : 'false');
+    updateToggleUI(isDark);
+}
+
+function updateToggleUI(isDark) {
+    const toggle = document.getElementById('darkModeToggle');
+    const thumb = document.getElementById('darkModeThumb');
+    if (isDark) {
+        toggle.classList.add('bg-primary');
+        toggle.classList.remove('bg-outline-variant');
+        thumb.style.transform = 'translateX(24px)';
+    } else {
+        toggle.classList.remove('bg-primary');
+        toggle.classList.add('bg-outline-variant');
+        thumb.style.transform = 'translateX(0)';
+    }
+}
+
+// Init
+const savedMode = localStorage.getItem('darkMode') === 'true';
+if (savedMode) document.documentElement.classList.add('dark');
+updateToggleUI(savedMode);
+</script>
+
+{% endblock %}
