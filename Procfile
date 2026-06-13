@@ -1,1 +1,1 @@
-web: python manage.py migrate --fake-initial && gunicorn config.wsgi:application --bind 0.0.0.0:$PORT
+web: python manage.py migrate --fake-initial && python manage.py create_test_users && gunicorn config.wsgi:application --bind 0.0.0.0:$PORT
