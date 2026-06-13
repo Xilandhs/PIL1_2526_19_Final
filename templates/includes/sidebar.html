@@ -3,15 +3,12 @@
     
     <!-- Logo -->
     <div class="h-16 flex items-center px-5 border-b border-outline-variant/20">
-        <!-- Logo version expanded -->
         <div class="flex items-center gap-2 sidebar-expanded-content">
             <div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center shadow-sm">
                 <span class="material-symbols-outlined text-white text-xl">school</span>
             </div>
             <span class="font-semibold text-on-surface text-xl">MentorLink</span>
         </div>
-        
-        <!-- Logo version collapsed (icône seule) -->
         <div class="sidebar-collapsed-content hidden w-full justify-center">
             <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
                 <span class="material-symbols-outlined text-primary text-2xl">school</span>
@@ -25,45 +22,36 @@
             <span class="material-symbols-outlined text-xl">dashboard</span>
             <span class="text-sm font-medium nav-text sidebar-text">Tableau de bord</span>
         </a>
-        
         <a href="/chat/" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 {% if request.path == '/chat/' %}bg-primary/10 text-primary{% else %}text-on-surface-variant hover:bg-surface-container{% endif %}">
             <span class="material-symbols-outlined text-xl">forum</span>
             <span class="text-sm font-medium nav-text sidebar-text">Messages</span>
             <span class="ml-auto bg-error text-white text-[10px] px-1.5 py-0.5 rounded-full sidebar-text">{{ unread_messages_count|default:"0" }}</span>
         </a>
-        
         <a href="/feed/" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 {% if request.path == '/feed/' %}bg-primary/10 text-primary{% else %}text-on-surface-variant hover:bg-surface-container{% endif %}">
             <span class="material-symbols-outlined text-xl">rss_feed</span>
             <span class="text-sm font-medium nav-text sidebar-text">Le Flux</span>
         </a>
-        
         <a href="/my-feed/" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 {% if request.path == '/my-feed/' %}bg-primary/10 text-primary{% else %}text-on-surface-variant hover:bg-surface-container{% endif %}">
             <span class="material-symbols-outlined text-xl">campaign</span>
             <span class="text-sm font-medium nav-text sidebar-text">Mes annonces</span>
         </a>
-        
         <a href="/sessions/" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 {% if request.path == '/sessions/' %}bg-primary/10 text-primary{% else %}text-on-surface-variant hover:bg-surface-container{% endif %}">
             <span class="material-symbols-outlined text-xl">event_note</span>
             <span class="text-sm font-medium nav-text sidebar-text">Mes sessions</span>
         </a>
-        
         <a href="/matching/" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 {% if request.path == '/matching/' %}bg-primary/10 text-primary{% else %}text-on-surface-variant hover:bg-surface-container{% endif %}">
             <span class="material-symbols-outlined text-xl">handshake</span>
             <span class="text-sm font-medium nav-text sidebar-text">Matching</span>
         </a>
-        
         <a href="/profile/" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 {% if request.path == '/profile/' %}bg-primary/10 text-primary{% else %}text-on-surface-variant hover:bg-surface-container{% endif %}">
             <span class="material-symbols-outlined text-xl">person</span>
             <span class="text-sm font-medium nav-text sidebar-text">Mon profil</span>
         </a>
-        
         <div class="h-px bg-outline-variant/20 my-3"></div>
-        
         <a href="/profile/edit/" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container transition-all duration-200">
             <span class="material-symbols-outlined text-xl">settings</span>
             <span class="text-sm font-medium nav-text sidebar-text">Paramètres</span>
         </a>
-        
         <a href="/logout/" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-error/70 hover:bg-error-container/10 hover:text-error transition-all duration-200">
             <span class="material-symbols-outlined text-xl">logout</span>
             <span class="text-sm font-medium sidebar-text">Déconnexion</span>
@@ -71,47 +59,48 @@
     </nav>
 </aside>
 
+<!-- Barre de navigation mobile (bas de page) -->
+<nav class="mobile-bottom-nav md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-outline-variant/20 z-50 flex justify-around items-center h-16 px-2">
+    <a href="/dashboard/" class="mobile-nav-item flex flex-col items-center gap-0.5 px-3 py-1 rounded-xl {% if request.path == '/dashboard/' %}text-primary{% else %}text-on-surface-variant{% endif %}">
+        <span class="material-symbols-outlined text-2xl">dashboard</span>
+        <span class="text-[10px] font-medium">Accueil</span>
+    </a>
+    <a href="/chat/" class="mobile-nav-item flex flex-col items-center gap-0.5 px-3 py-1 rounded-xl relative {% if request.path == '/chat/' %}text-primary{% else %}text-on-surface-variant{% endif %}">
+        <span class="material-symbols-outlined text-2xl">forum</span>
+        {% if unread_messages_count > 0 %}
+        <span class="absolute top-0 right-2 bg-error text-white text-[9px] px-1 rounded-full">{{ unread_messages_count }}</span>
+        {% endif %}
+        <span class="text-[10px] font-medium">Messages</span>
+    </a>
+    <a href="/feed/" class="mobile-nav-item flex flex-col items-center gap-0.5 px-3 py-1 rounded-xl {% if request.path == '/feed/' %}text-primary{% else %}text-on-surface-variant{% endif %}">
+        <span class="material-symbols-outlined text-2xl">rss_feed</span>
+        <span class="text-[10px] font-medium">Flux</span>
+    </a>
+    <a href="/matching/" class="mobile-nav-item flex flex-col items-center gap-0.5 px-3 py-1 rounded-xl {% if request.path == '/matching/' %}text-primary{% else %}text-on-surface-variant{% endif %}">
+        <span class="material-symbols-outlined text-2xl">handshake</span>
+        <span class="text-[10px] font-medium">Matching</span>
+    </a>
+    <a href="/profile/" class="mobile-nav-item flex flex-col items-center gap-0.5 px-3 py-1 rounded-xl {% if request.path == '/profile/' %}text-primary{% else %}text-on-surface-variant{% endif %}">
+        <span class="material-symbols-outlined text-2xl">person</span>
+        <span class="text-[10px] font-medium">Profil</span>
+    </a>
+</nav>
+
 <style>
-    /* Sidebar states */
-    .sidebar-expanded {
-        width: 260px;
-    }
-    
-    .sidebar-collapsed {
-        width: 80px;
-    }
-    
+    .sidebar-expanded { width: 260px; }
+    .sidebar-collapsed { width: 80px; }
     .sidebar-collapsed .sidebar-text,
-    .sidebar-collapsed .nav-text {
-        display: none;
-    }
-    
-    .sidebar-collapsed .sidebar-expanded-content {
-        display: none !important;
-    }
-    
-    .sidebar-collapsed .sidebar-collapsed-content {
-        display: flex !important;
-    }
-    
-    .sidebar-expanded .sidebar-collapsed-content {
-        display: none !important;
-    }
-    
-    .sidebar-expanded .sidebar-expanded-content {
-        display: flex !important;
-    }
-    
-    .sidebar-collapsed nav a {
-        justify-content: center;
-        padding: 12px;
-    }
-    
-    .main-expanded {
-        margin-left: 260px;
-    }
-    
-    .main-collapsed {
-        margin-left: 80px;
+    .sidebar-collapsed .nav-text { display: none; }
+    .sidebar-collapsed .sidebar-expanded-content { display: none !important; }
+    .sidebar-collapsed .sidebar-collapsed-content { display: flex !important; }
+    .sidebar-expanded .sidebar-collapsed-content { display: none !important; }
+    .sidebar-expanded .sidebar-expanded-content { display: flex !important; }
+    .sidebar-collapsed nav a { justify-content: center; padding: 12px; }
+    .main-expanded { margin-left: 260px; }
+    .main-collapsed { margin-left: 80px; }
+
+    /* Espace pour la barre du bas sur mobile */
+    @media (max-width: 767px) {
+        #mainContent { padding-bottom: 64px; }
     }
 </style>
