@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
-from apps.users.views import login_view, logout_view, register_view, register_api_view, dashboard_view, edit_profile_view, user_profile_view
+from apps.users.views import login_view, logout_view, register_view, register_api_view, dashboard_view, profile_view, edit_profile_view, user_profile_view
 from apps.matching.views import matching_view
 from apps.feed.views import my_ads_view
 
@@ -21,7 +21,7 @@ urlpatterns = [
     path('dashboard/', dashboard_view, name='dashboard'),
     
     # Profil
-    path('profile/', TemplateView.as_view(template_name='pages/profile.html'), name='profile'),
+    path('profile/', profile_view, name='profile'),
     path('profile/edit/', edit_profile_view, name='edit_profile'),
     path('profile/user/<int:user_id>/', user_profile_view, name='user_profile'),
     
