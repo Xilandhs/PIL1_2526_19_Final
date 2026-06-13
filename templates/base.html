@@ -5,17 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>{% block title %}MentorLink{% endblock %}</title>
-    
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Inter font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
-    
-    <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL@20..48,100..700,0..1" rel="stylesheet">
-    
-    <!-- Tailwind config -->
     <script>
         tailwind.config = {
             theme: {
@@ -51,178 +43,133 @@
             }
         }
     </script>
-    
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        
+        body { font-family: 'Inter', sans-serif; }
         .gradient-text {
             background: linear-gradient(135deg, #386943 0%, #75a87d 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        
-        /* Sidebar transitions */
-        .sidebar-transition {
-            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .content-transition {
-            transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        /* Sidebar states */
-        .sidebar-expanded {
-            width: 260px;
-        }
-        
-        .sidebar-collapsed {
-            width: 80px;
-        }
-        
-        .sidebar-collapsed .sidebar-text,
-        .sidebar-collapsed .nav-text {
-            display: none;
-        }
-        
-        .sidebar-collapsed .sidebar-expanded-content {
-            display: none !important;
-        }
-        
-        .sidebar-collapsed .sidebar-collapsed-content {
-            display: flex !important;
-        }
-        
-        .sidebar-expanded .sidebar-collapsed-content {
-            display: none !important;
-        }
-        
-        .sidebar-expanded .sidebar-expanded-content {
-            display: flex !important;
-        }
-        
-        .sidebar-collapsed nav a {
-            justify-content: center;
-            padding: 12px;
-        }
-        
-        .main-expanded {
-            margin-left: 260px;
-        }
-        
-        .main-collapsed {
-            margin-left: 80px;
-        }
-        
-        /* Cards */
+        .sidebar-transition { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .card-linear {
             background: white;
             border-radius: 20px;
             transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
             border: 0.5px solid rgba(56, 105, 67, 0.08);
         }
-        
         .card-linear:hover {
             transform: translateY(-2px);
             box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.05);
             border-color: rgba(56, 105, 67, 0.15);
         }
-        
-        /* Animations */
         @keyframes slideUp {
             from { opacity: 0; transform: translateY(12px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        
-        .animate-slide-up {
-            animation: slideUp 0.4s cubic-bezier(0.2, 0, 0, 1) forwards;
-        }
-        
-        /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
+        .animate-slide-up { animation: slideUp 0.4s cubic-bezier(0.2, 0, 0, 1) forwards; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* Desktop sidebar */
+        @media (min-width: 768px) {
+            #sidebar { transform: translateX(0) !important; position: fixed; }
+            #mainContent { margin-left: 260px; }
+            #sidebarOverlay { display: none !important; }
+        }
+
+        /* Mobile sidebar */
+        @media (max-width: 767px) {
+            #sidebar { transform: translateX(-100%); position: fixed; z-index: 50; }
+            #sidebar.mobile-open { transform: translateX(0); }
+            #mainContent { margin-left: 0 !important; }
+        }
+
+        .sidebar-collapsed .sidebar-text,
+        .sidebar-collapsed .nav-text { display: none; }
+        .sidebar-collapsed .sidebar-expanded-content { display: none !important; }
+        .sidebar-collapsed .sidebar-collapsed-content { display: flex !important; }
+        .sidebar-expanded .sidebar-collapsed-content { display: none !important; }
+        .sidebar-expanded .sidebar-expanded-content { display: flex !important; }
+        .sidebar-collapsed nav a { justify-content: center; padding: 12px; }
     </style>
-    
     {% block extra_head %}{% endblock %}
 </head>
 <body class="bg-gradient-to-br from-surface via-surface to-surface-container-low text-on-surface antialiased">
-    
+
+    <!-- Overlay mobile -->
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black/40 z-40 hidden md:hidden"></div>
+
     <!-- Sidebar -->
     {% include 'includes/sidebar.html' %}
-    
-    <!-- Main content wrapper -->
-    <main id="mainContent" class="content-transition main-expanded min-h-screen">
-        
-        <!-- Navbar -->
-        {% include 'includes/navbar.html' %}
-        
-        <!-- Page content -->
-        <div class="px-6 py-6">
 
+    <!-- Main content -->
+    <main id="mainContent" class="min-h-screen">
+        {% include 'includes/navbar.html' %}
+        <div class="px-4 py-4 md:px-6 md:py-6">
             {% if messages %}
-    {% for message in messages %}
-    <div class="fixed top-20 right-4 z-50 p-4 rounded-lg shadow-lg {% if message.tags == 'success' %}bg-green-500 text-white{% elif message.tags == 'error' %}bg-red-500 text-white{% else %}bg-blue-500 text-white{% endif %}">
-        {{ message }}
-    </div>
-    {% endfor %}
-{% endif %}
+                {% for message in messages %}
+                <div class="fixed top-20 right-4 z-50 p-4 rounded-lg shadow-lg {% if message.tags == 'success' %}bg-green-500 text-white{% elif message.tags == 'error' %}bg-red-500 text-white{% else %}bg-blue-500 text-white{% endif %}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            {% endif %}
             {% block content %}{% endblock %}
         </div>
     </main>
-    
+
     <script>
-        // Sidebar toggle
         const sidebar = document.getElementById('sidebar');
         const mainContent = document.getElementById('mainContent');
         const toggleBtn = document.getElementById('toggleSidebarBtn');
+        const overlay = document.getElementById('sidebarOverlay');
+        const isMobile = () => window.innerWidth < 768;
         let isCollapsed = false;
-        
+
         if (toggleBtn) {
             toggleBtn.addEventListener('click', () => {
-                if (isCollapsed) {
-                    // Expand sidebar
-                    sidebar.classList.remove('sidebar-collapsed');
-                    sidebar.classList.add('sidebar-expanded');
-                    mainContent.classList.remove('main-collapsed');
-                    mainContent.classList.add('main-expanded');
-                    
-                    // Show expanded content, hide collapsed
-                    document.querySelectorAll('.sidebar-expanded-content').forEach(el => el.style.display = 'flex');
-                    document.querySelectorAll('.sidebar-collapsed-content').forEach(el => el.style.display = 'none');
-                    
-                    isCollapsed = false;
+                if (isMobile()) {
+                    // Mobile: toggle overlay
+                    sidebar.classList.toggle('mobile-open');
+                    overlay.classList.toggle('hidden');
                 } else {
-                    // Collapse sidebar
-                    sidebar.classList.remove('sidebar-expanded');
-                    sidebar.classList.add('sidebar-collapsed');
-                    mainContent.classList.remove('main-expanded');
-                    mainContent.classList.add('main-collapsed');
-                    
-                    // Show collapsed content, hide expanded
-                    document.querySelectorAll('.sidebar-expanded-content').forEach(el => el.style.display = 'none');
-                    document.querySelectorAll('.sidebar-collapsed-content').forEach(el => el.style.display = 'flex');
-                    
-                    isCollapsed = true;
+                    // Desktop: collapse/expand
+                    if (isCollapsed) {
+                        sidebar.classList.remove('sidebar-collapsed');
+                        sidebar.classList.add('sidebar-expanded');
+                        mainContent.style.marginLeft = '260px';
+                        document.querySelectorAll('.sidebar-expanded-content').forEach(el => el.style.display = 'flex');
+                        document.querySelectorAll('.sidebar-collapsed-content').forEach(el => el.style.display = 'none');
+                        isCollapsed = false;
+                    } else {
+                        sidebar.classList.remove('sidebar-expanded');
+                        sidebar.classList.add('sidebar-collapsed');
+                        mainContent.style.marginLeft = '80px';
+                        document.querySelectorAll('.sidebar-expanded-content').forEach(el => el.style.display = 'none');
+                        document.querySelectorAll('.sidebar-collapsed-content').forEach(el => el.style.display = 'flex');
+                        isCollapsed = true;
+                    }
                 }
             });
         }
-        
-        // Initialize collapsed content visibility
+
+        // Fermer sidebar mobile en cliquant sur l'overlay
+        overlay?.addEventListener('click', () => {
+            sidebar.classList.remove('mobile-open');
+            overlay.classList.add('hidden');
+        });
+
+        // Init
         document.querySelectorAll('.sidebar-collapsed-content').forEach(el => el.style.display = 'none');
-        
-        // Dropdown toggles
+
+        // Dropdowns
         const profileBtn = document.getElementById('profileBtn');
         const profileMenu = document.getElementById('profileMenu');
         const notifBtn = document.getElementById('notifBtn');
         const notifMenu = document.getElementById('notifMenu');
-        
+
         if (profileBtn) {
             profileBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -230,7 +177,6 @@
                 notifMenu?.classList.add('hidden');
             });
         }
-        
         if (notifBtn) {
             notifBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -238,13 +184,12 @@
                 profileMenu?.classList.add('hidden');
             });
         }
-        
         document.addEventListener('click', (e) => {
             if (!profileBtn?.contains(e.target)) profileMenu?.classList.add('hidden');
             if (!notifBtn?.contains(e.target)) notifMenu?.classList.add('hidden');
         });
     </script>
-    
+
     {% block extra_scripts %}{% endblock %}
 </body>
 </html>
