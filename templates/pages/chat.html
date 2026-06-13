@@ -32,7 +32,7 @@
                 </div>
                 <div class="conversation-info">
                     <div class="conversation-name">{{ conv.contact.prenom }} {{ conv.contact.nom }}</div>
-                    <div class="conversation-last-msg">{{ conv.last_message|truncatechars:30|default:"Aucun message" }}</div>
+                    <div class="conversation-last-msg">{{ conv.last_message.contenu|truncatechars:30|default:"Aucun message" }}</div>
                 </div>
                 {% if conv.unread_count > 0 %}
                 <div class="unread-badge">{{ conv.unread_count }}</div>
