@@ -169,8 +169,7 @@
                         {% if is_owner %}<a href="/profile/edit/" class="text-outline hover:text-primary"><span class="material-symbols-outlined text-sm">edit</span></a>{% endif %}
                     </div>
                     <div class="space-y-4">
-                        <div><p class="font-medium">Master en Intelligence Artificielle</p><p class="text-xs text-outline">IFRI · 2023 - 2025</p></div>
-                        <div><p class="font-medium">Licence en Informatique</p><p class="text-xs text-outline">UAC · 2020 - 2023</p></div>
+                        <p class="text-sm text-outline">{{ user.profil.filiere|default:"Non définie" }} — {{ user.profil.niveau|default:"" }}</p>
                     </div>
                 </div>
 
@@ -180,8 +179,7 @@
                         {% if is_owner %}<a href="/profile/edit/" class="text-outline hover:text-primary"><span class="material-symbols-outlined text-sm">edit</span></a>{% endif %}
                     </div>
                     <div class="space-y-3">
-                        <div><div class="flex justify-between text-sm"><span>Français</span><span class="text-outline">Natif</span></div><div class="w-full bg-gray-100 rounded-full h-1.5 mt-1"><div class="bg-primary h-1.5 rounded-full" style="width:100%"></div></div></div>
-                        <div><div class="flex justify-between text-sm"><span>Anglais</span><span class="text-outline">Courant (C1)</span></div><div class="w-full bg-gray-100 rounded-full h-1.5 mt-1"><div class="bg-primary h-1.5 rounded-full" style="width:85%"></div></div></div>
+                        <p class="text-sm text-outline">Non renseigné.</p>
                     </div>
                 </div>
             </div>
