@@ -199,9 +199,15 @@
                 <div class="bg-white rounded-xl p-5 border">
                     <h3 class="font-semibold flex items-center gap-2 mb-4"><span class="material-symbols-outlined text-primary">military_tech</span>Accomplissements</h3>
                     <div class="flex flex-wrap gap-4">
-                        <div class="flex items-center gap-3 p-2 rounded-xl bg-surface-container/30"><div class="w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center"><span class="material-symbols-outlined text-amber-600">star</span></div><div><p class="text-sm font-medium">Top Mentor</p><p class="text-xs text-outline">Top 5%</p></div></div>
+                        {% if user.profil.total_sessions >= 50 %}
                         <div class="flex items-center gap-3 p-2 rounded-xl bg-surface-container/30"><div class="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center"><span class="material-symbols-outlined text-emerald-600">emoji_events</span></div><div><p class="text-sm font-medium">Expert</p><p class="text-xs text-outline">50+ sessions</p></div></div>
+                        {% endif %}
+                        {% if user.nb_avis >= 25 %}
                         <div class="flex items-center gap-3 p-2 rounded-xl bg-surface-container/30"><div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center"><span class="material-symbols-outlined text-primary">handshake</span></div><div><p class="text-sm font-medium">Super Mentor</p><p class="text-xs text-outline">25+ avis</p></div></div>
+                        {% endif %}
+                        {% if user.profil.total_sessions == 0 and user.nb_avis == 0 %}
+                        <p class="text-sm text-outline">Aucun accomplissement pour le moment.</p>
+                        {% endif %}
                     </div>
                 </div>
 
