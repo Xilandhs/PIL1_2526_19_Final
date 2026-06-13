@@ -176,6 +176,22 @@
 function toggleDarkMode() {
     const isDark = document.documentElement.classList.toggle('dark');
     localStorage.setItem('darkMode', isDark ? 'true' : 'false');
+    
+    if (isDark) {
+        document.body.style.background = '#1a1a2e';
+        document.body.style.color = '#ffffff';
+        document.querySelectorAll('.bg-white').forEach(el => {
+            el.style.background = '#2d2d44';
+            el.style.color = '#ffffff';
+        });
+    } else {
+        document.body.style.background = '';
+        document.body.style.color = '';
+        document.querySelectorAll('.bg-white').forEach(el => {
+            el.style.background = '';
+            el.style.color = '';
+        });
+    }
     updateToggleUI(isDark);
 }
 

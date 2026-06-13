@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL@20..48,100..700,0..1" rel="stylesheet">
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
@@ -87,6 +88,53 @@
             #mainContent { margin-left: 0 !important; }
         }
 
+        /* Mode sombre global */
+        .dark body,
+        html.dark {
+             background: #111827 !important;
+             color: #f9fafb !important;
+        }
+
+        html.dark .bg-white {
+             background: #1f2937 !important;
+             color: #f9fafb !important;
+        }
+
+        html.dark .bg-gradient-to-br {
+             background: #111827 !important;
+        }
+
+        html.dark aside {
+         background: #1f2937 !important;
+         border-color: #374151 !important;
+        }
+
+        html.dark nav.mobile-bottom-nav {
+             background: #1f2937 !important;
+             border-color: #374151 !important;
+        }
+
+        html.dark .border {
+             border-color: #374151 !important;
+        }
+
+        html.dark .text-on-surface {
+             color: #f9fafb !important;
+        }
+
+        html.dark .text-on-surface-variant,
+        html.dark .text-outline {
+             color: #9ca3af !important;
+        }
+
+        html.dark input, 
+        html.dark textarea,
+        html.dark select {
+             background: #374151 !important;
+             color: #f9fafb !important;
+             border-color: #4b5563 !important;
+        }
+
         .sidebar-collapsed .sidebar-text,
         .sidebar-collapsed .nav-text { display: none; }
         .sidebar-collapsed .sidebar-expanded-content { display: none !important; }
@@ -94,11 +142,20 @@
         .sidebar-expanded .sidebar-collapsed-content { display: none !important; }
         .sidebar-expanded .sidebar-expanded-content { display: flex !important; }
         .sidebar-collapsed nav a { justify-content: center; padding: 12px; }
+    
     </style>
     {% block extra_head %}{% endblock %}
 </head>
 <body class="bg-gradient-to-br from-surface via-surface to-surface-container-low text-on-surface antialiased">
-
+    
+    <script>
+    // Appliquer mode sombre immédiatement pour éviter le flash
+    if (localStorage.getItem('darkMode') === 'true') {
+        document.documentElement.classList.add('dark');
+        document.body && document.body.setAttribute('data-theme', 'dark');
+    }
+    </script>
+    <body id="appBody" class="bg-gradient-to-br from-surface via-surface to-surface-container-low text-on-surface antialiased"></body>
     <!-- Overlay mobile -->
     <div id="sidebarOverlay" class="fixed inset-0 bg-black/40 z-40 hidden md:hidden"></div>
 
@@ -127,7 +184,12 @@
         const overlay = document.getElementById('sidebarOverlay');
         const isMobile = () => window.innerWidth < 768;
         let isCollapsed = false;
-
+        
+        // Appliquer le mode sombre au chargement
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.documentElement.classList.add('dark');
+            document.body.classList.add('bg-gray-900', 'text-white');
+        }
         if (toggleBtn) {
             toggleBtn.addEventListener('click', () => {
                 if (isMobile()) {
@@ -188,6 +250,7 @@
             if (!profileBtn?.contains(e.target)) profileMenu?.classList.add('hidden');
             if (!notifBtn?.contains(e.target)) notifMenu?.classList.add('hidden');
         });
+
     </script>
 
     {% block extra_scripts %}{% endblock %}
