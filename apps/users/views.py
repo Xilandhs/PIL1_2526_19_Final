@@ -48,11 +48,11 @@ def logout_view(request):
 
 
 def register_view(request):
-    """Affiche la page d'inscription avec le formulaire à deux étapes"""
     if request.user.is_authenticated:
         return redirect('dashboard')
-    
-    return render(request, 'pages/register.html')
+    from apps.core.models import Matiere
+    matieres = Matiere.objects.all().order_by('nom')
+    return render(request, 'pages/register.html', {'matieres': matieres})
 
 @csrf_exempt
 def register_api_view(request):
@@ -98,40 +98,22 @@ def register_api_view(request):
             format_prefere='les_deux'
         )
         
-        # Mapping des sujets vers les matières
-        subject_mapping = {
-            'maths': 'Mathématiques',
-            'coding': 'Programmation',
-            'physics': 'Physique',
-            'algo': 'Algorithmes',
-            'english': 'Anglais',
-            'databases': 'Bases de données',
-            'economics': 'Économie',
-            'stats': 'Statistiques',
-            'sysdesign': 'Architecture logicielle',
-            'reseaux': 'Réseaux',
-            'cybersec': 'Cybersécurité',
-        }
         
         # Ajouter les points forts (compétences)
         for subject in data.get('strengths', []):
-            matiere_nom = subject_mapping.get(subject, subject)
-            matiere, created = Matiere.objects.get_or_create(nom=matiere_nom)
-            Competence.objects.create(
-                user=user,
-                matiere=matiere,
-                type='competence'
-            )
-        
+            try:
+                matiere = Matiere.objects.get(id=int(subject))
+                Competence.objects.create(user=user, matiere=matiere, type='competence')
+            except (Matiere.DoesNotExist, ValueError):
+                pass
+
         # Ajouter les points faibles (lacunes)
         for subject in data.get('weaknesses', []):
-            matiere_nom = subject_mapping.get(subject, subject)
-            matiere, created = Matiere.objects.get_or_create(nom=matiere_nom)
-            Competence.objects.create(
-                user=user,
-                matiere=matiere,
-                type='lacune'
-            )
+            try:
+                matiere = Matiere.objects.get(id=int(subject))
+                Competence.objects.create(user=user, matiere=matiere, type='lacune')
+            except (Matiere.DoesNotExist, ValueError):
+                pass
         
         # Connecter l'utilisateur
         login(request, user)
