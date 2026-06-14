@@ -48,4 +48,8 @@ urlpatterns = [
     path('404/', TemplateView.as_view(template_name='pages/404.html'), name='404'),
     path('start/', TemplateView.as_view(template_name='pages/empty_dashboard.html'), name='start'),
     path('academic-profile/', TemplateView.as_view(template_name='pages/academic-profile.html'), name='academic_profile'),
+
+    path('legal/cgu/', TemplateView.as_view(template_name='pages/legal_cgu.html'), name='legal_cgu'),
+    path('legal/confidentialite/', TemplateView.as_view(template_name='pages/legal_confidentialite.html'), name='legal_confidentialite'),
+    path('legal/mentions/', TemplateView.as_view(template_name='pages/legal_mentions.html'), name='legal_mentions'),
 ]

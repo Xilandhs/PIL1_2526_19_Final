@@ -1,0 +1,58 @@
+{% extends 'base_empty.html' %}
+{% block title %}Politique de confidentialité - MentorLink{% endblock %}
+{% block content %}
+<div class="max-w-3xl mx-auto px-4 py-16">
+    <div class="mb-8">
+        <a href="/" class="inline-flex items-center gap-2 text-primary text-sm hover:underline">
+            <span class="material-symbols-outlined text-sm">arrow_back</span> Retour à l'accueil
+        </a>
+    </div>
+    <h1 class="text-3xl font-bold text-on-surface mb-2">Politique de confidentialité</h1>
+    <p class="text-sm text-outline mb-8">Dernière mise à jour : juin 2026</p>
+
+    <div class="space-y-8 text-sm text-on-surface-variant leading-relaxed">
+        <section>
+            <h2 class="text-lg font-semibold text-on-surface mb-3">1. Données collectées</h2>
+            <p>Lors de votre inscription et utilisation de MentorLink, nous collectons :</p>
+            <ul class="list-disc list-inside mt-2 space-y-1">
+                <li>Nom, prénom et email</li>
+                <li>Numéro de téléphone (optionnel)</li>
+                <li>Filière et niveau académique</li>
+                <li>Compétences et lacunes académiques déclarées</li>
+                <li>Messages échangés sur la plateforme</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2 class="text-lg font-semibold text-on-surface mb-3">2. Utilisation des données</h2>
+            <p>Vos données sont utilisées exclusivement pour :</p>
+            <ul class="list-disc list-inside mt-2 space-y-1">
+                <li>Vous identifier sur la plateforme</li>
+                <li>Faciliter le matching entre mentors et mentorés</li>
+                <li>Permettre la communication entre utilisateurs</li>
+                <li>Améliorer les fonctionnalités de la plateforme</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2 class="text-lg font-semibold text-on-surface mb-3">3. Stockage et sécurité</h2>
+            <p>Vos données sont stockées sur des serveurs sécurisés (Railway). Les mots de passe sont chiffrés et ne sont jamais stockés en clair. Nous mettons en œuvre des mesures techniques raisonnables pour protéger vos informations.</p>
+        </section>
+
+        <section>
+            <h2 class="text-lg font-semibold text-on-surface mb-3">4. Partage des données</h2>
+            <p>Vos données ne sont pas vendues ni partagées avec des tiers à des fins commerciales. Certaines informations de profil (nom, filière, compétences) sont visibles par les autres utilisateurs dans le cadre du fonctionnement normal de la plateforme.</p>
+        </section>
+
+        <section>
+            <h2 class="text-lg font-semibold text-on-surface mb-3">5. Vos droits</h2>
+            <p>Vous pouvez à tout moment modifier ou supprimer votre compte depuis les paramètres de votre profil. Pour exercer vos droits d'accès, de rectification ou de suppression, contactez-nous à : <a href="mailto:mentorlink.ifri@gmail.com" class="text-primary hover:underline">mentorlink.ifri@gmail.com</a></p>
+        </section>
+
+        <section>
+            <h2 class="text-lg font-semibold text-on-surface mb-3">6. Cookies</h2>
+            <p>MentorLink utilise des cookies de session nécessaires au bon fonctionnement de la plateforme (authentification). Aucun cookie publicitaire ou de tracking n'est utilisé.</p>
+        </section>
+    </div>
+</div>
+{% endblock %}
