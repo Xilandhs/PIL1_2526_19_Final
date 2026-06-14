@@ -135,7 +135,7 @@
                         <label class="block text-sm font-medium text-[#36675a] mb-1">Numéro Matricule <span class="text-red-500">*</span></label>
                         <div class="relative">
                             <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#717970] text-xl">badge</span>
-                            <input type="text" id="matricule" class="w-full pl-10 pr-3 py-2.5 bg-white border border-[#c1c9be] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#006a68]/20 focus:border-[#006a68] text-base" placeholder="EX: IFRI-2024-001">
+                            <input type="text" id="matricule" class="w-full pl-10 pr-3 py-2.5 bg-white border border-[#c1c9be] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#006a68]/20 focus:border-[#006a68] text-base" placeholder="Ex: 12345678">
                         </div>
                     </div>
                     
@@ -348,6 +348,14 @@
             
             if (password !== confirmPassword) {
                 errorText.textContent = 'Les mots de passe ne correspondent pas';
+                errorBox.classList.remove('hidden');
+                setTimeout(() => errorBox.classList.add('hidden'), 4000);
+                return;
+            }
+
+            const matriculeRegex = /^\d{8}$/;
+            if (!matriculeRegex.test(matricule)) {
+                errorText.textContent = 'Matricule invalide (8 chiffres requis, ex: 12345678)';
                 errorBox.classList.remove('hidden');
                 setTimeout(() => errorBox.classList.add('hidden'), 4000);
                 return;
