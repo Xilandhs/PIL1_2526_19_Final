@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, get_object_or_404
+﻿from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -99,7 +99,7 @@ def register_api_view(request):
         )
         
         
-        # Ajouter les points forts (compétences)
+       # Ajouter les points forts (compétences)
         for subject in data.get('strengths', []):
             try:
                 matiere = Matiere.objects.get(id=int(subject))
@@ -114,7 +114,8 @@ def register_api_view(request):
                 Competence.objects.create(user=user, matiere=matiere, type='lacune')
             except (Matiere.DoesNotExist, ValueError):
                 pass
-        
+
+            
         # Connecter l'utilisateur
         login(request, user)
         
@@ -341,3 +342,4 @@ def delete_account_view(request):
             messages.error(request, 'Mot de passe incorrect') 
             return redirect('settings') 
     return redirect('settings') 
+

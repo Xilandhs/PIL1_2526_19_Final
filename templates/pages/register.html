@@ -220,56 +220,24 @@
                     <div>
                         <label class="block text-sm font-medium text-[#36675a] mb-3">Points Forts <span class="text-[#006a68]">(ce que vous maîtrisez)</span></label>
                         <div class="grid grid-cols-2 md:grid-cols-3 gap-2" id="strengthsContainer">
-                            <div class="subject-card cursor-pointer p-3 rounded-xl border border-[#c1c9be] bg-white text-center transition-all" data-subject="maths">
-                                <span class="material-symbols-outlined text-2xl text-[#0d1f17]">functions</span>
-                                <p class="text-sm mt-1">Mathématiques</p>
+                            {% for matiere in matieres %}
+                            <div class="subject-card cursor-pointer p-3 rounded-xl border border-[#c1c9be] bg-white text-center transition-all" data-subject="{{ matiere.id }}" data-nom="{{ matiere.nom }}">
+                                 <span class="material-symbols-outlined text-2xl text-[#0d1f17]">{{ matiere.icone|default:"school" }}</span>
+                                 <p class="text-sm mt-1">{{ matiere.nom }}</p>
                             </div>
-                            <div class="subject-card cursor-pointer p-3 rounded-xl border border-[#c1c9be] bg-white text-center transition-all" data-subject="coding">
-                                <span class="material-symbols-outlined text-2xl text-[#0d1f17]">terminal</span>
-                                <p class="text-sm mt-1">Programmation</p>
-                            </div>
-                            <div class="subject-card cursor-pointer p-3 rounded-xl border border-[#c1c9be] bg-white text-center transition-all" data-subject="physics">
-                                <span class="material-symbols-outlined text-2xl text-[#0d1f17]">science</span>
-                                <p class="text-sm mt-1">Physique</p>
-                            </div>
-                            <div class="subject-card cursor-pointer p-3 rounded-xl border border-[#c1c9be] bg-white text-center transition-all" data-subject="algo">
-                                <span class="material-symbols-outlined text-2xl text-[#0d1f17]">data_usage</span>
-                                <p class="text-sm mt-1">Algorithmes</p>
-                            </div>
-                            <div class="subject-card cursor-pointer p-3 rounded-xl border border-[#c1c9be] bg-white text-center transition-all" data-subject="english">
-                                <span class="material-symbols-outlined text-2xl text-[#0d1f17]">translate</span>
-                                <p class="text-sm mt-1">Anglais</p>
-                            </div>
-                            <div class="subject-card cursor-pointer p-3 rounded-xl border border-[#c1c9be] bg-white text-center transition-all" data-subject="databases">
-                                <span class="material-symbols-outlined text-2xl text-[#0d1f17]">database</span>
-                                <p class="text-sm mt-1">Bases de données</p>
-                            </div>
+                            {% endfor %}
                         </div>
                     </div>
                     
                     <div>
                         <label class="block text-sm font-medium text-[#36675a] mb-3">Points à améliorer <span class="text-[#006a68]">(où vous avez besoin d'aide)</span></label>
                         <div class="grid grid-cols-2 md:grid-cols-3 gap-2" id="weaknessesContainer">
-                            <div class="weak-card subject-card cursor-pointer p-3 rounded-xl border border-[#c1c9be] bg-white text-center transition-all" data-subject="economics">
-                                <span class="material-symbols-outlined text-2xl text-[#0d1f17]">account_balance</span>
-                                <p class="text-sm mt-1">Économie</p>
+                            {% for matiere in matieres %}
+                            <div class="weak-card subject-card cursor-pointer p-3 rounded-xl border border-[#c1c9be] bg-white text-center transition-all" data-subject="{{ matiere.id }}" data-nom="{{ matiere.nom }}">
+                                 <span class="material-symbols-outlined text-2xl text-[#0d1f17]">{{ matiere.icone|default:"school" }}</span>
+                                 <p class="text-sm mt-1">{{ matiere.nom }}</p>
                             </div>
-                            <div class="weak-card subject-card cursor-pointer p-3 rounded-xl border border-[#c1c9be] bg-white text-center transition-all" data-subject="stats">
-                                <span class="material-symbols-outlined text-2xl text-[#0d1f17]">calculate</span>
-                                <p class="text-sm mt-1">Statistiques</p>
-                            </div>
-                            <div class="weak-card subject-card cursor-pointer p-3 rounded-xl border border-[#c1c9be] bg-white text-center transition-all" data-subject="sysdesign">
-                                <span class="material-symbols-outlined text-2xl text-[#0d1f17]">architecture</span>
-                                <p class="text-sm mt-1">Architecture logicielle</p>
-                            </div>
-                            <div class="weak-card subject-card cursor-pointer p-3 rounded-xl border border-[#c1c9be] bg-white text-center transition-all" data-subject="reseaux">
-                                <span class="material-symbols-outlined text-2xl text-[#0d1f17]">router</span>
-                                <p class="text-sm mt-1">Réseaux</p>
-                            </div>
-                            <div class="weak-card subject-card cursor-pointer p-3 rounded-xl border border-[#c1c9be] bg-white text-center transition-all" data-subject="cybersec">
-                                <span class="material-symbols-outlined text-2xl text-[#0d1f17]">security</span>
-                                <p class="text-sm mt-1">Cybersécurité</p>
-                            </div>
+                            {% endfor %}
                         </div>
                     </div>
                     
@@ -410,30 +378,24 @@
         });
         
         // Sélection des points forts
-        document.querySelectorAll('#strengthsContainer .subject-card').forEach(card => {
-            card.addEventListener('click', function() {
-                const subject = this.dataset.subject;
-                this.classList.toggle('selected');
-                if (this.classList.contains('selected')) {
-                    if (!selectedStrengths.includes(subject)) selectedStrengths.push(subject);
-                } else {
-                    selectedStrengths = selectedStrengths.filter(s => s !== subject);
-                }
-            });
-        });
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-2" id="strengthsContainer">
+            {% for matiere in matieres %}
+            <div class="subject-card cursor-pointer p-3 rounded-xl border border-[#c1c9be] bg-white text-center transition-all" data-subject="{{ matiere.id }}">
+                <span class="material-symbols-outlined text-2xl text-[#0d1f17]">{{ matiere.icone|default:"school" }}</span>
+                <p class="text-sm mt-1">{{ matiere.nom }}</p>
+            </div>
+            {% endfor %}
+        </div>
         
         // Sélection des points faibles
-        document.querySelectorAll('#weaknessesContainer .weak-card').forEach(card => {
-            card.addEventListener('click', function() {
-                const subject = this.dataset.subject;
-                this.classList.toggle('selected');
-                if (this.classList.contains('selected')) {
-                    if (!selectedWeaknesses.includes(subject)) selectedWeaknesses.push(subject);
-                } else {
-                    selectedWeaknesses = selectedWeaknesses.filter(s => s !== subject);
-                }
-            });
-        });
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-2" id="weaknessesContainer">
+            {% for matiere in matieres %}
+            <div class="weak-card subject-card cursor-pointer p-3 rounded-xl border border-[#c1c9be] bg-white text-center transition-all" data-subject="{{ matiere.id }}">
+                 <span class="material-symbols-outlined text-2xl text-[#0d1f17]">{{ matiere.icone|default:"school" }}</span>
+                 <p class="text-sm mt-1">{{ matiere.nom }}</p>
+            </div>
+            {% endfor %}
+        </div>
         
         // SUBMISSION - Envoi des données à l'API
         document.getElementById('submitSignup')?.addEventListener('click', async function(e) {
