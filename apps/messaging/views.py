@@ -228,10 +228,10 @@ def get_users_list(request):
             'id': u.id,
             'prenom': u.prenom,
             'nom': u.nom,
-            'email': u.email,
             'avatar': u.profil.photo_url if hasattr(u, 'profil') and u.profil.photo_url else None,
             'initials': f"{u.prenom[0]}{u.nom[0]}",
-            'filiere': u.profil.filiere if hasattr(u, 'profil') else None,
+            'filiere': u.profil.filiere if hasattr(u, 'profil') else '',
+            'niveau': u.profil.niveau if hasattr(u, 'profil') else '',
         })
     
     return JsonResponse({'users': users_data})
