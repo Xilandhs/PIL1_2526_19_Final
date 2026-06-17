@@ -198,20 +198,23 @@
             <span class="material-symbols-outlined text-outline text-sm cursor-pointer align-middle">more_horiz</span>
         </div>
         <div class="space-y-3">
-            {% for msg in recent_messages|slice:":3" %}
-            <div class="flex items-start gap-3 pb-3 border-b border-outline-variant/20">
-                <div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center shrink-0">
-                    <span class="material-symbols-outlined text-secondary text-sm align-middle">chat_bubble</span>
+           {% for msg in recent_messages|slice:":3" %}
+            <a href="/chat/?contact={{ msg.expediteur.id }}" class="flex items-center gap-3 pb-3 border-b border-outline-variant/20 hover:opacity-80 transition">
+                <div class="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0 font-semibold text-primary text-sm">
+                    {{ msg.expediteur.prenom|slice:":1" }}{{ msg.expediteur.nom|slice:":1" }}
                 </div>
-                <div>
-                    <p class="text-sm font-medium text-on-surface">Message de {{ msg.expediteur.prenom }}</p>
-                    <p class="text-xs text-on-surface-variant">{{ msg.contenu|truncatechars:50|default:"Message" }}</p>
-                    <span class="text-2xs text-outline mt-1 block">{{ msg.created_at|date:"d/m/Y à H:i" }}</span>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-on-surface">{{ msg.expediteur.prenom }} {{ msg.expediteur.nom }}</p>
+                    <p class="text-xs text-outline">{{ msg.created_at|date:"d/m/Y à H:i" }}</p>
                 </div>
-            </div>
+                {% if not msg.lu %}
+                <span class="w-2 h-2 rounded-full bg-primary shrink-0"></span>
+                {% endif %}
+            </a>
             {% empty %}
             <div class="text-center py-4">
-                <p class="text-sm text-outline">Aucune activité récente</p>
+                <span class="material-symbols-outlined text-outline text-3xl">chat_bubble_outline</span>
+                <p class="text-sm text-outline mt-2">Aucune activité récente</p>
             </div>
             {% endfor %}
         </div>
