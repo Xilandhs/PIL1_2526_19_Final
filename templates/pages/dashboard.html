@@ -58,9 +58,9 @@
             <div>
                 <p class="text-xs font-medium text-outline uppercase tracking-wide">Taux de réussite</p>
                 <p class="text-3xl font-bold text-on-surface mt-2">{{ success_rate|default:"0" }}%</p>
-                <p class="text-xs text-emerald-600 mt-1 flex items-center gap-1">
+                <p class="text-xs mt-1 flex items-center gap-1 {% if success_rate >= 75 %}text-emerald-600{% elif success_rate >= 50 %}text-amber-500{% else %}text-outline{% endif %}">
                     <span class="material-symbols-outlined text-sm align-middle">trending_up</span>
-                    Excellent
+                    {% if success_rate >= 75 %}Excellent{% elif success_rate >= 50 %}Bien{% elif success_rate > 0 %}En progression{% else %}Aucune session{% endif %}
                 </p>
             </div>
             <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
@@ -205,8 +205,8 @@
                 </div>
                 <div>
                     <p class="text-sm font-medium text-on-surface">Message de {{ msg.expediteur.prenom }}</p>
-                    <p class="text-xs text-on-surface-variant">{{ msg.contenu|truncatechars:50 }}</p>
-                    <span class="text-2xs text-outline mt-1 block">{{ msg.created_at|timesince }}</span>
+                    <p class="text-xs text-on-surface-variant">{{ msg.contenu|truncatechars:50|default:"Message" }}</p>
+                    <span class="text-2xs text-outline mt-1 block">{{ msg.created_at|date:"d/m/Y à H:i" }}</span>
                 </div>
             </div>
             {% empty %}
@@ -226,26 +226,36 @@
             </h3>
             <span class="text-xs text-primary font-medium">+{{ sessions_this_week|default:"0" }} ce mois</span>
         </div>
-        <div class="space-y-4">
+       
+       <div class="space-y-4">
+            {% if total_sessions == 0 %}
+            <div class="text-center py-4">
+                <span class="material-symbols-outlined text-outline text-3xl">insights</span>
+                <p class="text-sm text-outline mt-2">Commencez des sessions pour suivre votre progression</p>
+                <a href="/matching/" class="text-primary text-sm mt-1 inline-block hover:underline">Trouver un mentor →</a>
+            </div>
+            {% else %}
             <div>
                 <div class="flex justify-between text-xs text-on-surface-variant mb-1">
                     <span>Sessions complétées</span>
-                    <span>{{ completed_sessions|default:"0" }}/{{ total_sessions|default:"0" }}</span>
+                    <span>{{ completed_sessions }}/{{ total_sessions }}</span>
                 </div>
                 <div class="h-2 bg-surface-container rounded-full overflow-hidden">
-                    <div class="h-full bg-primary rounded-full" style="width: {% if total_sessions > 0 %}{{ completed_sessions|default:0|divisibleby:total_sessions }}{% else %}0{% endif %}%;"></div>
+                    <div class="h-full bg-primary rounded-full" style="width: {{ success_rate }}%;"></div>
                 </div>
             </div>
             <div>
                 <div class="flex justify-between text-xs text-on-surface-variant mb-1">
-                    <span>Objectif mensuel</span>
-                    <span>{{ success_rate|default:"0" }}%</span>
+                    <span>Taux de réussite</span>
+                    <span>{{ success_rate }}%</span>
                 </div>
                 <div class="h-2 bg-surface-container rounded-full overflow-hidden">
-                    <div class="h-full bg-secondary rounded-full" style="width: {{ success_rate|default:"0" }}%;"></div>
+                    <div class="h-full bg-secondary rounded-full" style="width: {{ success_rate }}%;"></div>
                 </div>
             </div>
+            {% endif %}
         </div>
+
         <div class="mt-5 pt-3 border-t border-outline-variant/20">
             <div class="flex items-center justify-between">
                 <div class="text-center">
