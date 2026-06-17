@@ -377,25 +377,32 @@
             document.getElementById('step1Label').className = 'text-sm text-[#0d1f17] font-medium';
         });
         
-        // Sélection des points forts
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-2" id="strengthsContainer">
-            {% for matiere in matieres %}
-            <div class="subject-card cursor-pointer p-3 rounded-xl border border-[#c1c9be] bg-white text-center transition-all" data-subject="{{ matiere.id }}">
-                <span class="material-symbols-outlined text-2xl text-[#0d1f17]">{{ matiere.icone|default:"school" }}</span>
-                <p class="text-sm mt-1">{{ matiere.nom }}</p>
-            </div>
-            {% endfor %}
-        </div>
-        
+
+       // Sélection des points forts
+        document.querySelectorAll('#strengthsContainer .subject-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const subject = this.dataset.subject;
+                this.classList.toggle('selected');
+                if (this.classList.contains('selected')) {
+                    if (!selectedStrengths.includes(subject)) selectedStrengths.push(subject);
+                } else {
+                    selectedStrengths = selectedStrengths.filter(s => s !== subject);
+                }
+            });
+        });
+
         // Sélection des points faibles
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-2" id="weaknessesContainer">
-            {% for matiere in matieres %}
-            <div class="weak-card subject-card cursor-pointer p-3 rounded-xl border border-[#c1c9be] bg-white text-center transition-all" data-subject="{{ matiere.id }}">
-                 <span class="material-symbols-outlined text-2xl text-[#0d1f17]">{{ matiere.icone|default:"school" }}</span>
-                 <p class="text-sm mt-1">{{ matiere.nom }}</p>
-            </div>
-            {% endfor %}
-        </div>
+        document.querySelectorAll('#weaknessesContainer .weak-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const subject = this.dataset.subject;
+                this.classList.toggle('selected');
+                if (this.classList.contains('selected')) {
+                    if (!selectedWeaknesses.includes(subject)) selectedWeaknesses.push(subject);
+                } else {
+                    selectedWeaknesses = selectedWeaknesses.filter(s => s !== subject);
+                }
+            });
+        });
         
         // SUBMISSION - Envoi des données à l'API
         document.getElementById('submitSignup')?.addEventListener('click', async function(e) {
