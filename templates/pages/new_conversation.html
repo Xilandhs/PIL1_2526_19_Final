@@ -46,7 +46,6 @@
                     <div class="flex justify-between items-start">
                         <div>
                             <h3 class="font-semibold text-on-surface">{{ u.prenom }} {{ u.nom }}</h3>
-                            <p class="text-xs text-outline">{{ u.profil.filiere|default:"" }} · {{ u.profil.niveau|default:"" }}</p>
                         </div>
                         {% if u.id in existing_conversations %}
                         <span class="text-xs text-outline bg-surface-container px-2 py-0.5 rounded-full">Déjà discuté</span>
