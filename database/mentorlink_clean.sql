@@ -1,9 +1,4 @@
---
--- MentorLink — Base de données PROPRE (sans données de test)
--- Généré à partir de mentorlink_corrected.sql
--- Contient : structure, types, fonctions, vue, matières de référence, Django internal data
--- Ne contient PAS : utilisateurs fictifs, annonces, messages, compétences, profils, candidatures
---
+
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
